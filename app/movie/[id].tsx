@@ -1,18 +1,12 @@
 import { View, Text, ActivityIndicator, ScrollView, Image, StyleSheet } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useProduct } from '../../presentation/hooks/useProducto';
+import { formatImageUrl } from '../../config/helpers/url.helper';
 
 const ProductScreen = () => {
   const { id } = useLocalSearchParams();
 
   const { producto, isLoading, isError } = useProduct({ id: Number(203004) });
-  console.log('producto::: ', producto.Imagen);
-
-  // Función para corregir la URL
-  const formatImageUrl = (url: string) => {
-    if (!url) return '';
-    return url.replace(':8080', ''); // Eliminamos el puerto :8080
-  };
 
   const imageUrl = formatImageUrl(producto?.Imagen);
 
