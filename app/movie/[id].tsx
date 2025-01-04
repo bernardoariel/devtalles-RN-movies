@@ -45,7 +45,7 @@ const ProductScreen = () => {
         />
         {/* Gradiente */}
         <LinearGradient
-          colors={['rgba(0,0,0,0.6)', 'transparent']}
+          colors={['rgba(255,165,0,0.3)', 'transparent']}
           start={{ x: 0, y: 0 }} // Esquina superior izquierda
           end={{ x: 0.5, y: 0.5 }} // Se desvanece hacia el primer cuarto
           style={styles.gradient}
@@ -53,7 +53,7 @@ const ProductScreen = () => {
         {/* Botón de volver */}
         <View style={styles.backButton}>
           <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={30} color="white" />
+            <Ionicons name="arrow-back" size={30} color="orange" />
           </Pressable>
         </View>
       </View>
