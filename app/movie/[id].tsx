@@ -1,12 +1,19 @@
-import { View, Text, ActivityIndicator, ScrollView, Image, StyleSheet } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, ActivityIndicator, ScrollView, Image, StyleSheet, Dimensions, Pressable } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useProduct } from '../../presentation/hooks/useProducto';
+
+import { LinearGradient } from 'expo-linear-gradient'; // Importamos LinearGradient
+import { Ionicons } from '@expo/vector-icons'; // Importamos Ionicons para el ícono de volver
 import { formatImageUrl } from '../../config/helpers/url.helper';
+
+const screenHight = Dimensions.get('window').height;
 
 const ProductScreen = () => {
   const { id } = useLocalSearchParams();
+  const router = useRouter(); // Hook para manejar la navegación
 
   const { producto, isLoading, isError } = useProduct({ id: Number(203004) });
+  console.log('producto::: ', producto.Imagen);
 
   const imageUrl = formatImageUrl(producto?.Imagen);
 
@@ -29,14 +36,29 @@ const ProductScreen = () => {
 
   return (
     <ScrollView>
-      {/* Encabezado del producto */}
+      {/* Contenedor de la imagen con gradiente y botón */}
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: imageUrl }}
           style={styles.image}
-          resizeMode="cover" // Esto hace que la imagen ocupe todo el espacio y mantenga relación de aspecto
+          resizeMode="cover"
         />
+        {/* Gradiente */}
+        <LinearGradient
+          colors={['rgba(0,0,0,0.6)', 'transparent']}
+          start={{ x: 0, y: 0 }} // Esquina superior izquierda
+          end={{ x: 0.5, y: 0.5 }} // Se desvanece hacia el primer cuarto
+          style={styles.gradient}
+        />
+        {/* Botón de volver */}
+        <View style={styles.backButton}>
+          <Pressable onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={30} color="white" />
+          </Pressable>
+        </View>
       </View>
+
+      {/* Información del producto */}
       <View style={{ alignItems: 'center', padding: 16 }}>
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginVertical: 8 }}>
           {producto.Producto}
@@ -61,12 +83,24 @@ const ProductScreen = () => {
 const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
-    height: 300, // Altura de la imagen
-    backgroundColor: '#f0f0f0', // Color de fondo mientras se carga la imagen
+    height: screenHight * 0.4, // Altura del contenedor de la imagen
   },
   image: {
     width: '100%',
     height: '100%',
+  },
+  gradient: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+  },
+  backButton: {
+    position: 'absolute',
+    zIndex: 2,
+    top: 40,
+    left: 10,
+    elevation: 9,
   },
 });
 
