@@ -14,9 +14,9 @@ const RootLayout = () => {
   return (
     <QueryClientProvider client={queryClient}>
     <Stack 
-    screenOptions={{
-      headerShown:false
-    }}
+      screenOptions={{
+        headerShown:false
+      }}
      />
     </QueryClientProvider>
   )
