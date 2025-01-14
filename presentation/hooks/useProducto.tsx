@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query"
-import { movieApi } from '../../app/core/api/movie-api';
+import { abrilApi } from '../../app/core/api/movie-api';
 import { Producto } from "@/infrastructure/interfaces/producto.interface";
 
 
@@ -9,7 +9,7 @@ interface Options {
 }
 export const getProductById = async (term: number | string): Promise<Producto> => {
   try {
-    const { data } = await movieApi.get<Producto>(`/productos/${term}`);
+    const { data } = await abrilApi.get<Producto>(`/productos/${term}`);
     if (!data) {
       throw new Error('Producto no encontrado');
     }

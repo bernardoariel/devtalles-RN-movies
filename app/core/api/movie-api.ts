@@ -1,5 +1,5 @@
 import axios from 'axios'
 
-export const movieApi = axios.create({
+export const abrilApi = axios.create({
     baseURL: 'https://abril.arielbernardo.com/api'
 })

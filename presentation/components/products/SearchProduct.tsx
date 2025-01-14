@@ -1,36 +1,67 @@
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useMarcas } from '@/presentation/hooks/useMarcas';
+import { MarcasResponse } from '@/infrastructure/interfaces/marcas.interface';
+
 
 const SearchProduct = () => {
-  const [productId, setProductId] = useState(''); // Estado para el ID del producto
+  const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda
+  const [filteredMarcas, setFilteredMarcas] = useState<MarcasResponse[]>([]); // Estado para marcas filtradas
   const router = useRouter();
 
+  // Hook
+  const { marcas } = useMarcas();
+
+  // Filtrar marcas cuando el término de búsqueda cambia
+  useEffect(() => {
+    if (isNaN(Number(searchTerm)) && marcas) {
+      const results = marcas.filter((marca) =>
+        marca.Marca.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredMarcas(results);
+    } else {
+      setFilteredMarcas([]);
+    }
+  }, [searchTerm, marcas]);
+
   const handleSearch = () => {
-    const trimmedId = productId.trim(); // Eliminar espacios adicionales
-    if (trimmedId && !isNaN(Number(trimmedId))) {
+    const trimmedTerm = searchTerm.trim();
+    if (trimmedTerm && !isNaN(Number(trimmedTerm))) {
       router.push({
         pathname: `/product/[id]`,
-        params: { id: trimmedId },
+        params: { id: trimmedTerm },
       });
-    } else {
-      alert('Por favor, ingrese un ID válido (número).');
     }
+  };
+
+  const handleMarcaClick = (marca: MarcasResponse) => {
+    console.log('Marca seleccionada:', marca);
+    // Realiza cualquier acción adicional aquí
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Buscar Producto</Text>
+      <Text style={styles.title}>Buscar Producto o Marca</Text>
 
       <TextInput
         style={styles.input}
-        placeholder="ID del Producto"
-        keyboardType="numeric"
-        onChangeText={(text) => setProductId(text)}
-        value={productId}
+        placeholder="ID del Producto o Nombre de Marca"
+        onChangeText={(text) => setSearchTerm(text)}
+        value={searchTerm}
       />
 
       <Button title="Buscar Producto" onPress={handleSearch} />
+
+      {filteredMarcas.length > 0 && (
+        <ScrollView style={styles.dropdown}>
+          {filteredMarcas.map((item) => (
+            <TouchableOpacity key={item.CodMarca} onPress={() => handleMarcaClick(item)}>
+              <Text style={styles.listItem}>{item.Marca}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -50,6 +81,19 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
+  },
+  dropdown: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    maxHeight: 150,
+  },
+  listItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
 });
 
