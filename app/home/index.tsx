@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import MainSlideshow from '@/presentation/components/movies/MainSlideshow'
 import MovieHorizontalList from '@/presentation/components/movies/MovieHorizontalList'
 import { useRouter } from 'expo-router';
+import SearchProduct from '@/presentation/components/products/SearchProduct'
 const HomeScreen = () => {
   const router = useRouter();
 
@@ -17,21 +18,7 @@ const HomeScreen = () => {
   return (
     <ScrollView>
       <View style={{ padding: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Lista de Productos</Text>
-        {productos.map((producto) => (
-          <TouchableOpacity
-            key={producto.id}
-            onPress={() => router.push(`/movie/${producto.id}`)} // Navegar al componente dinámico
-            style={{
-              padding: 16,
-              marginBottom: 8,
-              backgroundColor: '#f0f0f0',
-              borderRadius: 8,
-            }}
-          >
-            <Text style={{ fontSize: 18 }}>{producto.name}</Text>
-          </TouchableOpacity>
-        ))}
+       <SearchProduct />
       </View>
     </ScrollView>
   );

@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { movieApi } from '../../app/core/api/movie-api';
+import { Producto } from "@/infrastructure/interfaces/producto.interface";
 
 
 interface Options {
