@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useProducts } from '@/presentation/hooks/useProducts';
@@ -8,11 +8,27 @@ import { useMarcas } from '@/presentation/hooks/useMarcas';
 const SearchProduct = () => {
   const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda
   const [filteredResults, setFilteredResults] = useState<ProductsResponse[]>([]); // Resultados filtrados
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const screenHeight = Dimensions.get('window').height;
   const router = useRouter();
 
   // Hook para productos
   const { productos, isLoading } = useProducts();
   const { marcas } = useMarcas()
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   useEffect(() => {
     console.log('Término de búsqueda:', searchTerm);
   
@@ -71,7 +87,8 @@ const SearchProduct = () => {
       params: { id: result.CodProducto },
     });
   };
-
+  const extraMargin = 20; // Descuento adicional
+const dropdownHeight = screenHeight - keyboardHeight - 150 - extraMargin;
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Buscar Producto</Text>
@@ -88,13 +105,17 @@ const SearchProduct = () => {
       {isLoading ? (
         <Text style={styles.loading}>Cargando productos...</Text>
       ) : filteredResults.length > 0 ? (
-        <ScrollView style={styles.dropdown}>
+        <ScrollView
+  style={[styles.dropdown, { maxHeight: dropdownHeight }]}
+  keyboardShouldPersistTaps="handled"
+  nestedScrollEnabled={true}
+>
   {filteredResults.map((item, index) => (
     <TouchableOpacity key={index} onPress={() => handleResultClick(item)}>
       <Text style={styles.listItem}>
         {'CodProducto' in item
-          ? `${item.Producto} - ${item.CodProducto}` // Muestra producto y código
-          : `${item.Marca}`} // Muestra marca
+          ? `${item.Producto} - ${item.CodProducto}`
+          : `${item.Marca}`}
       </Text>
     </TouchableOpacity>
   ))}
@@ -128,7 +149,6 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     backgroundColor: '#fff',
-    maxHeight: 150,
   },
   listItem: {
     padding: 10,
