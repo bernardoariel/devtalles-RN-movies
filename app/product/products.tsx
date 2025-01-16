@@ -3,6 +3,10 @@ import React from 'react';
 
 import { useProductByTerm } from '@/presentation/hooks/useProductByTerm'; // Hook nuevo
 import { useSearchParams } from 'expo-router/build/hooks';
+import ProductCard from './productCard';
+import { formatImageUrl } from '@/config/helpers/url.helper';
+
+
 
 const ProductsList = () => {
   const searchParams = useSearchParams();
@@ -18,9 +22,16 @@ const ProductsList = () => {
       ) : productos.length > 0 ? (
         <ScrollView style={styles.list}>
           {productos.map((producto) => (
-            <Text key={producto.CodProducto} style={styles.item}>
-              {producto.Producto} - {producto.CodProducto}
-            </Text>
+            <ProductCard
+              key={producto.CodProducto}
+              codProducto={producto.CodProducto}
+              nombreProducto={producto.Producto}
+              medida={producto.Medida}
+              descripcion={producto.Descripcion}
+              precio={producto.Precio}
+              stock={producto.Stock}
+              imageUrl={formatImageUrl(producto.Imagen)} // Formatea la URL
+            />
           ))}
         </ScrollView>
       ) : (
@@ -41,11 +52,6 @@ const styles = StyleSheet.create({
   },
   list: {
     marginTop: 10,
-  },
-  item: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   loading: {
     textAlign: 'center',
