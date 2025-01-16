@@ -71,13 +71,20 @@ const SearchProduct = () => {
   const handleSearch = () => {
     const trimmedTerm = searchTerm.trim();
 
-    if (trimmedTerm && !isNaN(Number(trimmedTerm))) {
-      // Búsqueda por ID
-      router.push({
-        pathname: `/product/[id]`,
-        params: { id: trimmedTerm },
-      });
-    }
+    
+  if (trimmedTerm && !isNaN(Number(trimmedTerm))) {
+    // Si es un número, navegar al producto por ID
+    router.push({
+      pathname: `/product/[id]`,
+      params: { id: trimmedTerm },
+    });
+  } else if (trimmedTerm) {
+    // Si es texto, navegar a la lista de productos filtrados
+    router.push({
+      pathname: `/product/products`,
+      params: { searchTerm: trimmedTerm },
+    });
+  }
   };
 
   const handleResultClick = (result: ProductsResponse) => {
