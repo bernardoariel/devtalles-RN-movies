@@ -1,6 +1,6 @@
 import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useProducts } from '@/presentation/hooks/useProducts';
 import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
 import { useMarcas } from '@/presentation/hooks/useMarcas';
@@ -11,10 +11,21 @@ const SearchProduct = () => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const screenHeight = Dimensions.get('window').height;
   const router = useRouter();
-
+  const inputRef = useRef<TextInput>(null);
   // Hook para productos
   const { productos, isLoading } = useProducts();
   const { marcas } = useMarcas()
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setSearchTerm(''); // Limpia el término de búsqueda
+      inputRef.current?.focus(); // Coloca el foco en el campo de entrada
+    }, [])
+  );
+  useEffect(() => {
+    inputRef.current?.focus(); // Coloca el foco en el campo de entrada
+  }, []);
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       setKeyboardHeight(e.endCoordinates.height);
