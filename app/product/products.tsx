@@ -1,26 +1,34 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import React from 'react';
-
-import { useProductByTerm } from '@/presentation/hooks/useProductByTerm'; // Hook nuevo
+import { useProductByTerm } from '@/presentation/hooks/useProductByTerm';
+import { useRouter } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
 import ProductCard from './productCard';
 import { formatImageUrl } from '@/config/helpers/url.helper';
-
-
+import { Ionicons } from '@expo/vector-icons';
 
 const ProductsList = () => {
   const searchParams = useSearchParams();
-  const searchTerm = searchParams.get('searchTerm') || ''; // Obtiene 'searchTerm' de los parámetros de URL
+  const searchTerm = searchParams.get('searchTerm') || '';
+  const router = useRouter();
 
-  const { productos, isLoading } = useProductByTerm(searchTerm); // Usa el nuevo hook
+  const { productos, isLoading } = useProductByTerm(searchTerm);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Resultados para "{searchTerm}"</Text>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={30} color="orange" />
+        </Pressable>
+        <Text style={styles.title}>Resultados para "{searchTerm}"</Text>
+      </View>
       {isLoading ? (
         <Text style={styles.loading}>Cargando productos...</Text>
       ) : productos.length > 0 ? (
-        <ScrollView style={styles.list}>
+        <ScrollView
+          style={styles.list}
+          contentContainerStyle={styles.scrollContent}
+        >
           {productos.map((producto) => (
             <ProductCard
               key={producto.CodProducto}
@@ -30,7 +38,13 @@ const ProductsList = () => {
               descripcion={producto.Descripcion}
               precio={producto.Precio}
               stock={producto.Stock}
-              imageUrl={formatImageUrl(producto.Imagen)} // Formatea la URL
+              imageUrl={formatImageUrl(producto.Imagen)}
+              onPress={() =>
+                router.push({
+                  pathname: `/product/[id]`,
+                  params: { id: producto.CodProducto },
+                })
+              }
             />
           ))}
         </ScrollView>
@@ -45,13 +59,23 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  backButton: {
+    marginRight: 10, // Espacio entre el botón y el título
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   list: {
     marginTop: 10,
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   loading: {
     textAlign: 'center',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface ProductCardProps {
   codProducto: string;
@@ -8,7 +8,8 @@ interface ProductCardProps {
   descripcion: string;
   precio: number;
   stock: number;
-  imageUrl: string | null; // Cambiar para recibir imageUrl directamente
+  imageUrl: string | null;
+  onPress: () => void; // Nueva prop para manejar el clic
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -19,9 +20,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   precio,
   stock,
   imageUrl,
+  onPress,
 }) => {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity onPress={onPress} style={styles.card}>
       {imageUrl ? (
         <Image source={{ uri: imageUrl }} style={styles.image} />
       ) : (
@@ -37,7 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Text style={styles.text}>Precio: ${precio.toFixed(2)}</Text>
         <Text style={styles.text}>Stock: {stock} unidades</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
