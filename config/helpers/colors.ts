@@ -7,9 +7,14 @@ const colors = {
     },
     // Paleta secundaria
     secondary: {
-      light: '#E3F2FD', // Azul claro
-      main: '#2196F3', // Azul principal
-      dark: '#1565C0', // Azul oscuro
+      light: '#FFB347', // Azul claro
+      main: '#FF8C42', // Azul principal
+      dark: '#D15700', // Azul oscuro
+    },
+    terciary: {
+      light: '#FFC085', // Azul claro
+      main: '#FF9E4A', // Azul principal
+      dark: '#E86A17', // Azul oscuro
     },
     // Colores neutrales
     neutral: {
