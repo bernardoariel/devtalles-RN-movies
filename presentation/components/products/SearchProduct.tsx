@@ -1,23 +1,37 @@
-import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Button, ScrollView, TouchableOpacity, Keyboard, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useProducts } from '@/presentation/hooks/useProducts';
 import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
 import { useMarcas } from '@/presentation/hooks/useMarcas';
 import { Ionicons } from '@expo/vector-icons';
+import colors from '@/config/helpers/colors';
+import { useFocusEffect } from '@react-navigation/native'; 
 
-
+ 
 const SearchProduct = () => {
   const [searchTerm, setSearchTerm] = useState(''); // Término de búsqueda
   const [filteredResults, setFilteredResults] = useState<ProductsResponse[]>([]); // Resultados filtrados
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const screenHeight = Dimensions.get('window').height;
   const router = useRouter();
-
+  const inputRef = useRef<TextInput>(null);
   // Hook para productos
   const { productos, isLoading } = useProducts();
   const { marcas } = useMarcas();
-
+  useFocusEffect(
+    React.useCallback(() => {
+      setSearchTerm(''); // Limpia el término
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus(); // Intenta enfocar el input
+        }
+      }, 100); // Garantiza un breve retraso
+    }, [])
+  );
+  useEffect(() => {
+    console.log('Resultados filtrados:', filteredResults);
+  }, [filteredResults]);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
       setKeyboardHeight(e.endCoordinates.height);
@@ -64,26 +78,31 @@ const SearchProduct = () => {
 
   const handleSearch = () => {
     const trimmedTerm = searchTerm.trim();
-
+  
     if (!trimmedTerm) {
       console.log("El término de búsqueda está vacío.");
       return; // No hacer nada si el término está vacío
     }
-
+  
+    // Ejecuta la navegación
     if (!isNaN(Number(trimmedTerm))) {
-      // Si es un número, navegar al producto por ID
       router.push({
         pathname: `/product/[id]`,
         params: { id: trimmedTerm },
       });
     } else {
-      // Si es texto, navegar a una lista de productos filtrados
       router.push({
         pathname: `/product/products`,
         params: { searchTerm: trimmedTerm },
       });
     }
+    console.log('Antes de limpiar:', searchTerm);
+    setSearchTerm('');
+    console.log('Después de limpiar:', searchTerm);
   };
+  useEffect(() => {
+    console.log('searchTerm actualizado:', searchTerm);
+  }, [searchTerm]);
 
   const handleResultClick = (result: ProductsResponse) => {
     router.push({
@@ -101,17 +120,19 @@ const SearchProduct = () => {
 
       <View style={styles.searchWrapper}>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#999" style={styles.icon} />
+        <Ionicons name="search" size={20} color={colors.primary.main} style={styles.icon} />
           <TextInput
+           ref={inputRef} 
             style={styles.input}
             placeholder="Buscar ..."
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.primary.main}
             onChangeText={(text) => setSearchTerm(text)}
             value={searchTerm}
+            autoCapitalize="none"
           />
         </View>
         <TouchableOpacity style={styles.roundButton} onPress={handleSearch}>
-          <Ionicons name="play" size={20} color="orange" />
+          <Ionicons name="play" size={20} color={colors.primary.dark} />
         </TouchableOpacity>
       </View>
 
@@ -119,20 +140,24 @@ const SearchProduct = () => {
         <Text style={styles.loading}>Cargando productos...</Text>
       ) : filteredResults.length > 0 ? (
         <ScrollView
-          style={[styles.dropdown, { maxHeight: dropdownHeight }]}
+          style={styles.dropdown}
           keyboardShouldPersistTaps="handled"
-          nestedScrollEnabled={true}
+          nestedScrollEnabled
         >
           {filteredResults.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => handleResultClick(item)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleResultClick(item)}
+              style={styles.listItemContainer}
+            >
               <Text style={styles.listItem}>
-                {'CodProducto' in item
-                  ? `${item.Producto} - ${item.CodProducto}`
-                  : `${item.Marca}`}
+                {item.Producto ? `${item.Producto} - ${item.CodProducto}` : `${item.Marca}`}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+
       ) : (
         <Text style={styles.noResults}></Text>
       )}
@@ -143,14 +168,13 @@ const SearchProduct = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    position: 'relative', // Importante para la lista desplegable
-    zIndex: 1, // Asegura que el dropdown se muestre encima
+    position: 'relative',
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#444',
+    color: colors.primary.dark,
   },
   searchWrapper: {
     flexDirection: 'row',
@@ -161,61 +185,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#FCB800',
+    borderColor: colors.primary.main,
     borderRadius: 25,
-    backgroundColor: '#FFE5B4',
+    backgroundColor: colors.primary.light,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
   icon: {
     marginRight: 10,
-    color: '#FCB800',
   },
   input: {
     flex: 1,
     height: 40,
-    color: '#6B4226',
+    color: colors.primary.dark,
   },
   roundButton: {
     width: 45,
     height: 45,
     borderRadius: 10,
-    backgroundColor: '#FFE5B4', // Fondo blanco
+    backgroundColor: colors.primary.light,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     borderWidth: 1,
-    borderColor: '#FCB800', // Borde naranja fuerte para mantener consistencia
-    marginBottom: 10,
+    borderColor: colors.primary.main,
   },
   dropdown: {
-    position: 'absolute', // Superpone el dropdown
-    top: 100, // Ajusta la posición desde la parte superior del input
-    left: 0,
-    right: 0,
+    marginTop: 8,
     borderWidth: 1,
-    borderColor: 'orange',
+    borderColor: colors.primary.main,
     borderRadius: 5,
-    backgroundColor: '#FFF8E7',
-    maxHeight: 250, // Altura máxima de la lista
-    zIndex: 2, // Prioridad sobre otros elementos
+    backgroundColor: colors.primary.light,
+    maxHeight: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  listItem: {
+  listItemContainer: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#FCB800',
-    color: '#444',
+    borderBottomColor: colors.primary.main,
+  },
+  listItem: {
+    color: colors.primary.dark,
+    fontSize: 16,
   },
   loading: {
     marginTop: 10,
     textAlign: 'center',
-    color: '#FCB800',
-  },
-  noResults: {
-    marginTop: 10,
-    textAlign: 'center',
-    color: '#999',
+    color: colors.primary.main,
   },
 });
+
 
 export default SearchProduct;
