@@ -1,8 +1,14 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import colors from "@/config/helpers/colors";
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import colors from '@/config/helpers/colors';
+import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
 
-const ResultsList = ({ results }) => {
+interface ResultsListProps {
+  results: ProductsResponse[];
+  onResultClick: (id: string) => void; // Función para manejar clic en un resultado
+}
+
+const ResultsList: React.FC<ResultsListProps> = ({ results, onResultClick }) => {
   if (results.length === 0) {
     return null;
   }
@@ -15,7 +21,11 @@ const ResultsList = ({ results }) => {
         nestedScrollEnabled
       >
         {results.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.resultItem}>
+          <TouchableOpacity
+            key={index}
+            style={styles.resultItem}
+            onPress={() => onResultClick(item.CodProducto)} // Navega con el ID del producto
+          >
             <Text style={styles.resultText}>
               {item.Producto ? `${item.Producto} - ${item.CodProducto}` : item.Marca}
             </Text>
@@ -28,17 +38,17 @@ const ResultsList = ({ results }) => {
 
 const styles = StyleSheet.create({
   resultsWrapper: {
-    position: "absolute",
+    position: 'absolute',
     top: 70, // Justo debajo del input
     left: 16,
     right: 16,
     zIndex: 1000,
   },
   resultsContainer: {
-    maxHeight: 250,
-    borderWidth: 1,
-    borderColor: colors.primary.main,
-    backgroundColor: colors.primary.light,
+    maxHeight: 800,
+    // borderWidth: 1,
+    // borderColor: colors.primary.main,
+    // backgroundColor: colors.primary.light,
     borderRadius: 5,
     padding: 8,
   },

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
-import { useProducts } from '@/presentation/hooks/useProducts';
-import { useMarcas } from '@/presentation/hooks/useMarcas';
 import colors from '@/config/helpers/colors';
 import SearchInput from '@/presentation/components/products/SearchInput';
-import ResultContainer from '@/presentation/components/products/ResultContainer';
+
+import { useProducts } from '@/presentation/hooks/useProducts';
+import { useMarcas } from '@/presentation/hooks/useMarcas';
 import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
+import ResultsList from '@/presentation/components/products/resultsList';
 
 const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,34 +35,57 @@ const HomeScreen = () => {
     }
   }, [searchTerm, productos, marcas]);
 
-  const handleResultClick = (result: ProductsResponse) => {
-    // Navega a otra pantalla con el ID del producto o cualquier otra información
-    router.push({
-      pathname: `/product/[id]`,
-      params: { id: result.CodProducto },
-    });
+  const handleClear = () => {
+    setSearchTerm('');
+    setFilteredResults([]);
   };
 
-  // Limpia el término de búsqueda y los resultados al enfocar la pantalla
-  useFocusEffect(
-    React.useCallback(() => {
-      setSearchTerm('');
-      setFilteredResults([]);
-    }, [])
-  );
+  const handleNavigate = () => {
+    const trimmedTerm = searchTerm.trim();
+
+    if (!trimmedTerm) {
+      console.log('El término de búsqueda está vacío.');
+      return;
+    }
+
+    if (!isNaN(Number(trimmedTerm))) {
+      router.push({
+        pathname: `/product/[id]`,
+        params: { id: trimmedTerm },
+      });
+    } else {
+      router.push({
+        pathname: `/product/products`,
+        params: { searchTerm: trimmedTerm },
+      });
+    }
+  };
+
+  const handleResultClick = (id: string) => {
+    router.push({
+      pathname: `/product/[id]`,
+      params: { id },
+    });
+  };
 
   return (
     <>
       <StatusBar backgroundColor={colors.primary.main} barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.header}>
-          <SearchInput value={searchTerm} onChange={setSearchTerm} />
+          <SearchInput
+            value={searchTerm}
+            onChange={setSearchTerm}
+            onClear={handleClear}
+            onNavigate={handleNavigate}
+          />
         </View>
-        <ResultContainer results={filteredResults} onResultClick={handleResultClick} />
+        <ResultsList results={filteredResults} onResultClick={handleResultClick} />
       </View>
     </>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
