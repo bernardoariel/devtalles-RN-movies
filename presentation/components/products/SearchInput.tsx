@@ -12,7 +12,7 @@ interface SearchInputProps {
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ value, onChange, onClear, onNavigate }) => {
-  const showTimesIcon = value.length > 3;
+  const showTimesIcon = value.length >= 3;
 
   return (
     <View style={styles.searchContainer}>

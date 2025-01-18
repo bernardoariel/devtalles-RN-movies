@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import colors from '@/config/helpers/colors';
 import SearchInput from '@/presentation/components/products/SearchInput';
-
 import { useProducts } from '@/presentation/hooks/useProducts';
 import { useMarcas } from '@/presentation/hooks/useMarcas';
 import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
@@ -73,6 +72,15 @@ const HomeScreen = () => {
       <StatusBar backgroundColor={colors.primary.main} barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.header}>
+          <View style={styles.titleContainer}>
+          <Image
+              source={require('@/assets/images/abrilCuore.png')} // Ajusta la ruta de la imagen
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>Buscador de Precios</Text>
+            
+          </View>
           <SearchInput
             value={searchTerm}
             onChange={setSearchTerm}
@@ -85,8 +93,6 @@ const HomeScreen = () => {
     </>
   );
 };
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -97,6 +103,24 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
+  },
+  titleContainer: {
+    flexDirection: 'row', // Alinea título e imagen horizontalmente
+    justifyContent: 'space-between', // Espacio entre texto e imagen
+    alignItems: 'center',
+    marginBottom: 16, // Espaciado entre el título y el buscador
+    paddingEnd: 30,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.neutral.dark,
+    paddingLeft: 20,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    marginLeft: 10, // Agrega separación desde el margen izquierdo
   },
 });
 

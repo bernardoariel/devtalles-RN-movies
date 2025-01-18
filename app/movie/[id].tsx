@@ -13,7 +13,7 @@ const ProductScreen = () => {
   const router = useRouter(); // Hook para manejar la navegación
 
   const { producto, isLoading, isError } = useProduct({ id: Number(203004) });
-  console.log('producto::: ', producto.Imagen);
+
 
   const imageUrl = formatImageUrl(producto?.Imagen);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import colors from '@/config/helpers/colors';
 import { ProductsResponse } from '@/infrastructure/interfaces/productos.interface';
 
@@ -10,7 +10,16 @@ interface ResultsListProps {
 
 const ResultsList: React.FC<ResultsListProps> = ({ results, onResultClick }) => {
   if (results.length === 0) {
-    return null;
+    return (
+      <View style={styles.emptyContainer}>
+        <Image
+          source={require('@/assets/images/logo.png')} // Asegúrate de que la ruta sea correcta
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        {/* <Text style={styles.emptyText}>No hay resultados</Text> */}
+      </View>
+    );
   }
 
   return (
@@ -37,18 +46,31 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, onResultClick }) => 
 };
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  logo: {
+    width: 250,
+    height: 250,
+    marginBottom: 16,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.primary.dark,
+    textAlign: 'center',
+  },
   resultsWrapper: {
     position: 'absolute',
-    top: 70, // Justo debajo del input
+    top: 125, // Justo debajo del input
     left: 16,
     right: 16,
     zIndex: 1000,
   },
   resultsContainer: {
     maxHeight: 800,
-    // borderWidth: 1,
-    // borderColor: colors.primary.main,
-    // backgroundColor: colors.primary.light,
     borderRadius: 5,
     padding: 8,
   },

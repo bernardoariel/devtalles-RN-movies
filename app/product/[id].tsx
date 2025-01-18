@@ -15,9 +15,10 @@ const ProductScreen = () => {
   const { producto, isLoading, isError } = useProduct({ id: Number(id) });
  
 //203004
-  console.log('producto::: ', producto.Imagen);
+  
 
   const imageUrl = formatImageUrl(producto?.Imagen);
+  console.log('producto::: ', imageUrl);
 
   if (isLoading) {
     return (
@@ -28,10 +29,14 @@ const ProductScreen = () => {
     );
   }
 
-  if (isError || !producto) {
+   // Error al cargar producto
+   if (isError || !producto) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.center}>
         <Text>Error al cargar el producto.</Text>
+        <Pressable onPress={() => router.reload()}>
+          <Text style={styles.retryText}>Reintentar</Text>
+        </Pressable>
       </View>
     );
   }
@@ -86,6 +91,15 @@ const ProductScreen = () => {
 
 // Estilos
 const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  retryText: {
+    color: 'blue',
+    marginTop: 10,
+  },
   imageContainer: {
     width: '100%',
     height: screenHight * 0.4, // Altura del contenedor de la imagen

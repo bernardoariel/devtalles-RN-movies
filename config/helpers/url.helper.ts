@@ -1,6 +1,8 @@
 
 export const formatImageUrl = (url: string): string => {
     if (!url) return '';
-    return url.replace(':8080', ''); // Elimina el puerto ":8080" de la URL
+    const updatedUrl = url.replace(':8080', '').replace('http://', 'https://');
+    return updatedUrl;
+
   };
   
