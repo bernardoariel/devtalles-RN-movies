@@ -33,7 +33,7 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, onResultClick }) => 
           <TouchableOpacity
             key={index}
             style={styles.resultItem}
-            onPress={() => onResultClick(item.CodProducto)} // Navega con el ID del producto
+            onPress={() => onResultClick(item.CodProducto || item.Marca)} // Navega con el ID del producto
           >
             <Text style={styles.resultText}>
               {item.Producto ? `${item.Producto} - ${item.CodProducto}` : item.Marca}

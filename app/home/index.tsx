@@ -60,12 +60,23 @@ const HomeScreen = () => {
     }
   };
 
-  const handleResultClick = (id: string) => {
-    router.push({
-      pathname: `/product/[id]`,
-      params: { id },
-    });
+  const handleResultClick = (term: number | string) => {
+    if (!isNaN(Number(term))) {
+      // Si es un número, navega al detalle del producto
+      router.push({
+        pathname: `/product/[id]`,
+        params: { id: term.toString() }, // Cambia "term" por "id" y asegura que sea string
+      });
+    } else {
+      // Si es texto, navega a la lista de productos por marca
+      console.log('La cadena es texto y no un número:', term);
+      router.push({
+        pathname: `/product/products`,
+        params: { searchTerm: term, searchByMarcas: 'true' },
+      });
+    }
   };
+  
 
   return (
     <>

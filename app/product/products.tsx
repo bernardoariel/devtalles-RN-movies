@@ -8,11 +8,15 @@ import { formatImageUrl } from '@/config/helpers/url.helper';
 import { Ionicons } from '@expo/vector-icons';
 
 const ProductsList = () => {
+
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get('searchTerm') || '';
+  const searchByMarcas = searchParams.get('searchByMarcas') || false;
+  console.log('searchByMarcas::: ', searchByMarcas);
+
   const router = useRouter();
 
-  const { productos, isLoading } = useProductByTerm(searchTerm);
+  const { productos, isLoading } = useProductByTerm(searchTerm,searchByMarcas);
 
   return (
     <View style={styles.container}>
