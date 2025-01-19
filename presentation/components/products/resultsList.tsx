@@ -30,15 +30,31 @@ const ResultsList: React.FC<ResultsListProps> = ({ results, onResultClick }) => 
         nestedScrollEnabled
       >
         {results.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.resultItem}
-            onPress={() => onResultClick(item.CodProducto || item.Marca)} // Navega con el ID del producto
-          >
-            <Text style={styles.resultText}>
-              {item.Producto ? `${item.Producto} - ${item.CodProducto}` : item.Marca}
-            </Text>
-          </TouchableOpacity>
+       <TouchableOpacity
+       key={index}
+       style={styles.resultItem}
+       onPress={() => onResultClick(item.CodProducto || item.Marca)}
+     >
+       <View style={styles.row}>
+         {item.Producto ? (
+           <>
+             <Text style={styles.description}>{item.Producto}</Text>
+             <View style={styles.badgeContainer}>
+               <Text style={styles.badgeText}>{item.CodProducto}</Text>
+             </View>
+           </>
+         ) : (
+           <>
+             <Text style={[styles.description, { flex: 7 }]}>{item.Marca}</Text>
+             <View style={styles.badgeContainer}>
+               <Text style={styles.badgeText}>X Marca</Text>
+             </View>
+           </>
+         )}
+       </View>
+     </TouchableOpacity>
+     
+      
         ))}
       </ScrollView>
     </View>
@@ -74,6 +90,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 8,
   },
+  resultRow: {
+    flexDirection: 'row', // Alinear horizontalmente
+    alignItems: 'center', // Centrar verticalmente
+  },
   resultItem: {
     padding: 10,
     borderBottomWidth: 1,
@@ -82,6 +102,42 @@ const styles = StyleSheet.create({
   resultText: {
     color: colors.primary.dark,
   },
+  badge: {
+    backgroundColor: colors.primary.dark, // Fondo del badge
+    borderRadius: 12, // Redondear bordes
+    paddingHorizontal: 8, // Espaciado lateral
+    paddingVertical: 2, // Espaciado vertical
+    alignSelf: 'flex-start', // Ajusta el tamaño al contenido
+    marginLeft: 8, // Separación con el texto del producto
+    
+  },
+  badgeText: {
+    color: colors.neutral.dark,
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row', // Alinear en fila
+    alignItems: 'flex-start', // Alinear los elementos en la parte superior para soportar múltiples filas
+    justifyContent: 'space-between', // Espaciado entre descripción y badge
+  },
+  description: {
+    flex: 7, // Ocupa el 70% del ancho
+    color: colors.neutral.dark,
+    fontSize: 14, // Ajusta el tamaño del texto si es necesario
+    marginRight: 8, // Espacio entre descripción y badge
+  },
+  badgeContainer: {
+    flex: 3, // Ocupa el 30% del ancho
+    backgroundColor: colors.primary.dark,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  
 });
 
 export default ResultsList;

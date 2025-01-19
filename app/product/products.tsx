@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar } from 'react-native';
 import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Platform, StatusBar } from 'react-native';
 import { useProductByTerm } from '@/presentation/hooks/useProductByTerm';
 import { useRouter } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
@@ -7,15 +7,16 @@ import ProductCard from './productCard';
 import { formatImageUrl } from '@/config/helpers/url.helper';
 import Header from '@/presentation/components/products/HeaderComponent';
 
-
 const ProductsList = () => {
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get('searchTerm') || '';
   const searchByMarcas = searchParams.get('searchByMarcas') || false;
-  console.log('searchByMarcas::: ', searchByMarcas);
 
   const router = useRouter();
   const { productos, isLoading } = useProductByTerm(searchTerm, searchByMarcas);
+
+  // Control para manejar el desfase:
+  const shouldRenderProducts = !isLoading && searchTerm.trim().length > 0;
 
   return (
     <View style={styles.container}>
@@ -23,9 +24,13 @@ const ProductsList = () => {
         title={`Resultados para "${searchTerm}"`}
         onBackPress={() => router.back()}
       />
-      {isLoading ? (
+      {isLoading && (
         <Text style={styles.loading}>Cargando productos...</Text>
-      ) : productos.length > 0 ? (
+      )}
+      {!isLoading && searchTerm.trim().length === 0 && (
+        <Text style={styles.prompt}>Escribe algo para buscar productos.</Text>
+      )}
+      {shouldRenderProducts && productos.length > 0 && (
         <ScrollView
           style={styles.list}
           contentContainerStyle={styles.scrollContent}
@@ -49,7 +54,8 @@ const ProductsList = () => {
             />
           ))}
         </ScrollView>
-      ) : (
+      )}
+      {shouldRenderProducts && productos.length === 0 && (
         <Text style={styles.noResults}>No hay productos encontrados</Text>
       )}
     </View>
@@ -62,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   list: {
-    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight!  : 1, // Ajusta para no superponer al Header
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight! : 1, // Ajusta para no superponer al Header
   },
   scrollContent: {
     paddingBottom: 40,
@@ -76,6 +82,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#999',
     marginTop: 20,
+  },
+  prompt: {
+    textAlign: 'center',
+    color: '#999',
+    marginTop: 20,
+    fontStyle: 'italic',
   },
 });
 
