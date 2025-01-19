@@ -1,31 +1,28 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar } from 'react-native';
 import React from 'react';
 import { useProductByTerm } from '@/presentation/hooks/useProductByTerm';
 import { useRouter } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
 import ProductCard from './productCard';
 import { formatImageUrl } from '@/config/helpers/url.helper';
-import { Ionicons } from '@expo/vector-icons';
+import Header from '@/presentation/components/products/HeaderComponent';
+
 
 const ProductsList = () => {
-
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get('searchTerm') || '';
   const searchByMarcas = searchParams.get('searchByMarcas') || false;
   console.log('searchByMarcas::: ', searchByMarcas);
 
   const router = useRouter();
-
-  const { productos, isLoading } = useProductByTerm(searchTerm,searchByMarcas);
+  const { productos, isLoading } = useProductByTerm(searchTerm, searchByMarcas);
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={30} color="orange" />
-        </Pressable>
-        <Text style={styles.title}>Resultados para "{searchTerm}"</Text>
-      </View>
+      <Header
+        title={`Resultados para "${searchTerm}"`}
+        onBackPress={() => router.back()}
+      />
       {isLoading ? (
         <Text style={styles.loading}>Cargando productos...</Text>
       ) : productos.length > 0 ? (
@@ -61,22 +58,11 @@ const ProductsList = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  backButton: {
-    marginRight: 10, // Espacio entre el botón y el título
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    flex: 1,
+    backgroundColor: '#fff',
   },
   list: {
-    marginTop: 10,
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight!  : 1, // Ajusta para no superponer al Header
   },
   scrollContent: {
     paddingBottom: 40,
