@@ -9,12 +9,17 @@ import colors from '@/config/helpers/colors';
 import { useMarcas } from '@/presentation/hooks/useMarcas';
 import { useSucursales } from '@/presentation/hooks/useSucursales';
 import { formatPrice } from '../../config/helpers/formatPrice';
+import ProductPricing from '@/presentation/components/products/productPricing';
+import { useFormaPagoPlanes } from '@/presentation/hooks/useFormaPagoPlanes';
+import { useFormaPago } from '@/presentation/hooks/useFormaPago';
 
 const screenHight = Dimensions.get('window').height;
 
 const ProductScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const { formaPagoPlanes, isLoading: isLoadingPlanes } = useFormaPagoPlanes();
+  const { findFormaPagoById, isLoading: isLoadingFormaPago } = useFormaPago();
   const { producto, isLoading, isError } = useProduct({ id: Number(id) });
 
   const imageUrl = formatImageUrl(producto?.Imagen);
@@ -98,8 +103,14 @@ const ProductScreen = () => {
             );
           })}
         </View>
+        <ProductPricing
+      Producto={producto.Producto}
+      Precio={producto.Precio}
+      formaPagoPlanes={formaPagoPlanes}
+      findFormaPagoById={findFormaPagoById}
+    />
       </ScrollView>
-  
+      
       {/* Contenedor fijo para el precio */}
       <View style={styles.fixedDetailsContainer}>
         <Text style={styles.priceText}>Precio de lista {formatPrice(producto.Precio)}</Text>
