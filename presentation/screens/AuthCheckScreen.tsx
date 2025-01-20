@@ -1,32 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/infrastructure/hooks/useAuth'; // Hook para verificar autenticación
+import { useAuth } from '@/infrastructure/hooks/useAuth';
 import colors from '@/config/helpers/colors';
 
-const Index = () => {
-  const router = useRouter();
+const AuthCheckScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Verificar si el usuario está autenticado
       const isAuthenticated = await useAuth();
 
-      // Redirigir según el estado de autenticación
       if (isAuthenticated) {
-        router.replace('/home'); // Usuario autenticado
+        router.replace('/home'); // Redirige a /home si está autenticado
       } else {
-        router.replace('/login'); // Usuario no autenticado
+        router.replace('/login'); // Redirige a /login si no está autenticado
       }
 
-      setIsLoading(false); // Finaliza el estado de carga
+      setIsLoading(false); // Deja de cargar
     };
 
     checkAuth();
   }, []);
 
-  // Mostrar un indicador de carga mientras se verifica la autenticación
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -35,7 +32,7 @@ const Index = () => {
     );
   }
 
-  return null; // No se renderiza nada mientras redirige
+  return null; // No renderiza nada mientras redirige
 };
 
 const styles = StyleSheet.create({
@@ -47,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Index;
+export default AuthCheckScreen;
