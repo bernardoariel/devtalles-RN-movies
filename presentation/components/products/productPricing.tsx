@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { formatPrice } from '@/config/helpers/formatPrice';
 
 interface FormaPagoPlan {
@@ -49,6 +49,18 @@ const ProductPricing = ({
     return cuota * tarjeta.NCuota;
   };
 
+  // Estado para controlar la expansión/colapso de los grupos
+  const [expandedGroups, setExpandedGroups] = useState<{ [key: string]: boolean }>(
+    () => Object.keys(groupedTarjetas).reduce((acc, key) => ({ ...acc, [key]: false }), {})
+  );
+
+  const toggleGroup = (codTarjeta: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [codTarjeta]: !prev[codTarjeta],
+    }));
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.productTitle}>{Producto}</Text>
@@ -57,37 +69,44 @@ const ProductPricing = ({
       {/* Renderizar tablas agrupadas */}
       {Object.entries(groupedTarjetas).map(([codTarjeta, group]) => {
         const formaPago = findFormaPagoById(codTarjeta)?.FormaPago || 'Sin nombre';
+        const isExpanded = expandedGroups[codTarjeta];
+
         return (
           <View key={codTarjeta} style={styles.card}>
-            <Text style={styles.cardTitle}>
-              {formaPago} - {codTarjeta}
-            </Text>
-            <View style={styles.table}>
-              {/* Encabezados */}
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableCell, styles.tableHeader]}>Cuotas</Text>
-                <Text style={[styles.tableCell, styles.tableHeader]}>Importe Cuota</Text>
-                <Text style={[styles.tableCell, styles.tableHeader]}>Total</Text>
-              </View>
-              {/* Filas */}
-              {group.map((tarjeta) => (
-                <View key={tarjeta.NCuota} style={styles.tableRow}>
-                  <Text style={styles.tableCell}>{tarjeta.NCuota}</Text>
-                  <Text style={styles.tableCell}>
-                    {formatPrice(
-                      tarjeta.NCuota === 1
-                        ? precioLista * (1 + tarjeta.Interes / 100)
-                        : (precioLista *
-                            (1 + (tarjeta.Interes / 100) * tarjeta.NCuota)) /
-                          tarjeta.NCuota
-                    )}
-                  </Text>
-                  <Text style={[styles.tableCell, styles.totalCell]}>
-                    {formatPrice(calculateTotal(tarjeta))}
-                  </Text>
+            <TouchableOpacity onPress={() => toggleGroup(codTarjeta)}>
+              <Text style={styles.cardTitle}>
+                {formaPago} - {codTarjeta}
+              </Text>
+            </TouchableOpacity>
+
+            {isExpanded && (
+              <View style={styles.table}>
+                {/* Encabezados */}
+                <View style={styles.tableRow}>
+                  <Text style={[styles.tableCell, styles.tableHeader]}>Cuotas</Text>
+                  <Text style={[styles.tableCell, styles.tableHeader]}>Importe Cuota</Text>
+                  <Text style={[styles.tableCell, styles.tableHeader]}>Total</Text>
                 </View>
-              ))}
-            </View>
+                {/* Filas */}
+                {group.map((tarjeta) => (
+                  <View key={tarjeta.NCuota} style={styles.tableRow}>
+                    <Text style={styles.tableCell}>{tarjeta.NCuota}</Text>
+                    <Text style={styles.tableCell}>
+                      {formatPrice(
+                        tarjeta.NCuota === 1
+                          ? precioLista * (1 + tarjeta.Interes / 100)
+                          : (precioLista *
+                              (1 + (tarjeta.Interes / 100) * tarjeta.NCuota)) /
+                            tarjeta.NCuota
+                      )}
+                    </Text>
+                    <Text style={[styles.tableCell, styles.totalCell]}>
+                      {formatPrice(calculateTotal(tarjeta))}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
           </View>
         );
       })}
