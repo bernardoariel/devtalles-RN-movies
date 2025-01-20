@@ -256,7 +256,12 @@ const styles = StyleSheet.create({
     paddingTop:5,
   },
   whiteText: {
+    backgroundColor: colors.neutral.dark,
     color: '#fff', // Texto blanco
+    paddingHorizontal: 10, // Espaciado horizontal
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 12,
   },
   
   badgeContainer: {
