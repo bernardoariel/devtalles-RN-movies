@@ -17,7 +17,9 @@ export const getSucursales = async (): Promise<SucursalResponse[]> => {
     });
   
     const findSucursalById = (id: number): SucursalResponse | undefined => {
-      return sucursales?.find((sucursal) => sucursal.CodSucursal === id);
+      const sucursal = sucursales?.find((sucursal) => sucursal.CodSucursal === id);
+      console.log(`Buscando sucursal con ID ${id}`, sucursal);
+      return sucursal;
     };
   
     return {

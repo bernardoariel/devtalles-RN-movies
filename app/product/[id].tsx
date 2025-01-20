@@ -6,6 +6,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { formatImageUrl } from '../../config/helpers/url.helper';
 import colors from '@/config/helpers/colors';
+import { useMarcas } from '@/presentation/hooks/useMarcas';
+import { useSucursales } from '@/presentation/hooks/useSucursales';
+import { formatPrice } from '../../config/helpers/formatPrice';
 
 const screenHight = Dimensions.get('window').height;
 
@@ -15,6 +18,8 @@ const ProductScreen = () => {
   const { producto, isLoading, isError } = useProduct({ id: Number(id) });
 
   const imageUrl = formatImageUrl(producto?.Imagen);
+  const { marcas,findMarcasById } = useMarcas()
+  const { findSucursalById } = useSucursales();
 
   if (isLoading) {
     return (
@@ -37,56 +42,71 @@ const ProductScreen = () => {
   }
 
   return (
-    <ScrollView>
-      {/* Contenedor de la imagen con gradiente, botón y badges */}
-      <View style={styles.imageContainer}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Sin imagen</Text>
+    <View style={{ flex: 1 }}>
+      {/* Contenido desplazable */}
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* Contenedor de la imagen con gradiente, botón y badges */}
+        <View style={styles.imageContainer}>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={styles.placeholderText}>Sin imagen</Text>
+            </View>
+          )}
+          {/* Badge del código */}
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{producto.CodProducto}</Text>
           </View>
-        )}
-        {/* Badge del código */}
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{producto.CodProducto}</Text>
+          <LinearGradient
+            colors={['rgba(255,165,0,0.5)', 'transparent']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.gradient}
+          />
+          <View style={styles.backButton}>
+            <Pressable onPress={() => router.back()}>
+              <Ionicons name="arrow-back" size={30} color="#FF8C00" />
+            </Pressable>
+          </View>
         </View>
-        {/* Gradiente */}
-        <LinearGradient
-          colors={['rgba(255,165,0,0.5)', 'transparent']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.gradient}
-        />
-        {/* Botón de volver */}
-        <View style={styles.backButton}>
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={30} color="#FF8C00" />
-          </Pressable>
+        <View style={styles.stockBadge}>
+          <Text style={styles.stockBadgeText}>{producto.Stock > 0 ? `${producto.Stock} Unidades` : 'Sin stock'}</Text>
         </View>
+        <View style={styles.productInfoContainer}>
+          <Text style={styles.productTitle}>{producto.Producto}</Text>
+          <Text style={styles.productDescription}>{producto.Descripcion}</Text>
+          <View style={styles.rowContainer}>
+            <Text style={[styles.detail, styles.whiteText]}>{producto.Medida}</Text>
+            <View style={styles.badgeContainer}>
+              <Text style={styles.badgeText}>
+                {findMarcasById(producto.CodMarca)?.Marca || 'Desconocida'}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.sucursalesContainer}>
+          <Text style={styles.sucursalesTitle}>Disponibilidad por sucursal:</Text>
+          {producto.Sucursales.map((sucursal) => {
+            const sucursalData = findSucursalById(sucursal.CodSucursal);
+            return (
+              <View key={sucursal.CodSucursal} style={styles.sucursalRow}>
+                <Text style={styles.sucursalText}>
+                  {sucursalData?.NombreSuc || 'Sucursal desconocida'} ({sucursal.Cantidad})
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+  
+      {/* Contenedor fijo para el precio */}
+      <View style={styles.fixedDetailsContainer}>
+        <Text style={styles.priceText}>Precio de lista {formatPrice(producto.Precio)}</Text>
       </View>
-
-      {/* Badge del stock entre la imagen y el siguiente div */}
-      <View style={styles.stockBadge}>
-        <Text style={styles.stockBadgeText}>{producto.Stock > 0 ? `Stock: ${producto.Stock}` : 'Sin stock'}</Text>
-      </View>
-
-      {/* Información del producto */}
-      <View style={styles.productInfoContainer}>
-        <Text style={styles.productTitle}>{producto.Producto}</Text>
-        <Text style={styles.productDescription}>{producto.Descripcion}</Text>
-      </View>
-
-      {/* Detalles del producto */}
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailsTitle}>Detalles:</Text>
-        <Text style={styles.detail}>Precio: ${producto.Precio}</Text>
-        <Text style={styles.detail}>Medida: {producto.Medida}</Text>
-        <Text style={styles.detail}>Categoría: {producto.CodCategoria}</Text>
-        <Text style={styles.detail}>Marca: {producto.CodMarca}</Text>
-      </View>
-    </ScrollView>
+    </View>
   );
+  
 };
 
 // Estilos
@@ -182,24 +202,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   productInfoContainer: {
-    backgroundColor: colors.primary.light,
+    backgroundColor: colors.neutral.dark, // Asegúrate de que el contenedor tenga un fondo
     alignItems: 'center',
     padding: 16,
+    borderBottomLeftRadius: 24, // Redondear el borde inferior izquierdo
+    borderBottomRightRadius: 24, // Redondear el borde inferior derecho
+    overflow: 'hidden', // Garantiza que el contenido respete los bordes redondeados
   },
   productTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 8,
     textAlign: 'center',
+    color: colors.primary.light,
   },
   productDescription: {
     fontSize: 16,
-    color: '#666',
+    color: colors.primary.dark,
     textAlign: 'center',
   },
   detailsContainer: {
     padding: 16,
-    backgroundColor: '#f9f9f9',
+    // backgroundColor: '#f9f9f9',
+    backgroundColor: colors.primary.main,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
   },
@@ -212,6 +237,94 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 4,
   },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%', // Asegura que ocupe todo el ancho del contenedor
+    paddingHorizontal: 16, // Opcional: añade espacio a los lados
+    paddingTop:5,
+  },
+  whiteText: {
+    color: '#fff', // Texto blanco
+  },
+  
+  badgeContainer: {
+    backgroundColor: colors.primary.main, // Fondo del badge
+    paddingHorizontal: 10, // Espaciado horizontal
+    paddingVertical: 4, // Espaciado vertical
+    borderRadius: 12, // Bordes redondeados
+    alignItems: 'center', // Centrar el texto
+  },
+ 
+  centerPrice: {
+  justifyContent: 'center', // Centrar verticalmente
+  alignItems: 'center', // Centrar horizontalmente
+},
+
+priceText: {
+  fontSize: 20, // Tamaño del texto del precio
+  fontWeight: 'bold', // Negrita para destacar el precio
+  color: colors.neutral.dark // Texto blanco
+},
+debugText: {
+  fontSize: 12,
+  color: '#333', // Color gris para mejor legibilidad
+  marginTop: 10,
+  backgroundColor: '#f5f5f5', // Fondo para distinguir el JSON
+  padding: 10,
+  borderRadius: 8,
+  fontFamily: 'monospace', // Fuente monospace para que sea más claro
+},
+/* sucursalesContainer: {
+  marginTop: 16,
+  paddingHorizontal: 16,
+}, */
+/* sucursalesTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 8,
+  color: '#333',
+}, */
+/* sucursalText: {
+  fontSize: 16,
+  marginVertical: 4,
+  color: '#555',
+}, */
+sucursalesContainer: {
+  marginTop: 16,
+  paddingHorizontal: 16,
+},
+sucursalesTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  marginBottom: 8,
+  color: '#333',
+},
+sucursalRow: {
+  marginBottom: 8, // Espaciado entre filas
+  paddingVertical: 8,
+  paddingHorizontal: 12,
+  backgroundColor: '#f5f5f5', // Color de fondo para cada fila
+  borderRadius: 8, // Bordes redondeados
+  borderWidth: 1,
+  borderColor: '#ddd', // Color del borde
+},
+sucursalText: {
+  fontSize: 12,
+  color: '#555',
+},
+fixedDetailsContainer: {
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: colors.primary.main,
+  padding: 16,
+  alignItems: 'center',
+  borderTopWidth: 1,
+  borderTopColor: '#ddd',
+},
+
 });
 
 export default ProductScreen;
