@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { formatPrice } from '@/config/helpers/formatPrice';
+import colors from '@/config/helpers/colors';
 
 interface FormaPagoPlan {
   CodForPago: string;
@@ -26,7 +27,8 @@ const ProductPricing = ({
   findFormaPagoById,
 }: ProductPricingProps) => {
   const precioLista = Precio;
-
+  const precioContado = precioLista * 0.82; // 18% de descuento
+  const precioDebito = precioLista * 0.9; // 10% de descuento
   const arrayCreditos = ['CRE', 'TNA', 'TNP', 'TVI']; // Códigos de crédito permitidos
 
   // Agrupar planes de pago por código de forma de pago
@@ -63,9 +65,12 @@ const ProductPricing = ({
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.productTitle}>{Producto}</Text>
-      <Text style={styles.price}>Lista: {formatPrice(precioLista)}</Text>
-
+      
+      <View style={styles.pricesContainer}>
+        <Text style={styles.price}>Contado: {formatPrice(precioContado)}</Text>
+        <Text style={styles.price}>Débito: {formatPrice(precioDebito)}</Text>
+        <Text style={styles.price}>Lista: {formatPrice(precioLista)}</Text>
+      </View>
       {/* Renderizar tablas agrupadas */}
       {Object.entries(groupedTarjetas).map(([codTarjeta, group]) => {
         const formaPago = findFormaPagoById(codTarjeta)?.FormaPago || 'Sin nombre';
@@ -130,13 +135,13 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
     padding: 16,
-    backgroundColor: '#FFECB3',
+    backgroundColor: colors.neutral.dark,
     borderRadius: 8,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FF6F00',
+    color: colors.primary.dark,
     marginBottom: 8,
   },
   table: {
@@ -151,15 +156,15 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     fontSize: 14,
-    color: '#333',
+    color: '#FFF',
   },
   tableHeader: {
     fontWeight: 'bold',
-    color: '#BF360C',
+    color: colors.neutral.dark
   },
   totalCell: {
     fontWeight: 'bold',
-    color: '#FF6F00',
+    color: colors.primary.dark,
   },
 });
 

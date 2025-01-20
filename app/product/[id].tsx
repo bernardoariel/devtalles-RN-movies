@@ -91,7 +91,7 @@ const ProductScreen = () => {
           </View>
         </View>
         <View style={styles.sucursalesContainer}>
-          <Text style={styles.sucursalesTitle}>Disponibilidad por sucursal:</Text>
+          {/* <Text style={styles.sucursalesTitle}>Disponibilidad por sucursal:</Text> */}
           {producto.Sucursales.map((sucursal) => {
             const sucursalData = findSucursalById(sucursal.CodSucursal);
             return (
