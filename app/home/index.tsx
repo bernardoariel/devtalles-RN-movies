@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import { Menu, Provider } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from '@/config/helpers/colors';
 import SearchInput from '@/presentation/components/products/SearchInput';
 import { useProducts } from '@/presentation/hooks/useProducts';
@@ -11,26 +21,33 @@ import ResultsList from '@/presentation/components/products/resultsList';
 const HomeScreen = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredResults, setFilteredResults] = useState<ProductsResponse[]>([]);
-  const router = useRouter();
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
   const { productos } = useProducts();
   const { marcas } = useMarcas();
 
   useEffect(() => {
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
+      setIsLoading(true);
 
-      const filteredProductos = productos.filter((producto) =>
-        producto.Producto?.toLowerCase().includes(term)
-      );
+      setTimeout(() => {
+        const filteredProductos = productos.filter((producto) =>
+          producto.Producto?.toLowerCase().includes(term)
+        );
 
-      const filteredMarcas = marcas?.filter((marca) =>
-        marca.Marca?.toLowerCase().includes(term)
-      );
+        const filteredMarcas = marcas?.filter((marca) =>
+          marca.Marca?.toLowerCase().includes(term)
+        );
 
-      setFilteredResults([...filteredProductos, ...(filteredMarcas || [])]);
+        setFilteredResults([...filteredProductos, ...(filteredMarcas || [])]);
+        setIsLoading(false);
+      }, 500); // Simulación de retraso para que se note el loading
     } else {
       setFilteredResults([]);
+      setIsLoading(false);
     }
   }, [searchTerm, productos, marcas]);
 
@@ -62,35 +79,49 @@ const HomeScreen = () => {
 
   const handleResultClick = (term: number | string) => {
     if (!isNaN(Number(term))) {
-      // Si es un número, navega al detalle del producto
       router.push({
         pathname: `/product/[id]`,
-        params: { id: term.toString() }, // Cambia "term" por "id" y asegura que sea string
+        params: { id: term.toString() },
       });
     } else {
-      // Si es texto, navega a la lista de productos por marca
-      console.log('La cadena es texto y no un número:', term);
       router.push({
         pathname: `/product/products`,
         params: { searchTerm: term, searchByMarcas: 'true' },
       });
     }
   };
-  
+
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.replace('/login');
+  };
 
   return (
-    <>
+    <Provider>
       <StatusBar backgroundColor={colors.primary.main} barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.titleContainer}>
-          <Image
-              source={require('@/assets/images/abrilCuore.png')} // Ajusta la ruta de la imagen
+            <Image
+              source={require('@/assets/images/abrilCuore.png')}
               style={styles.logo}
               resizeMode="contain"
             />
             <Text style={styles.title}>Buscador de Precios</Text>
-            
+            <Menu
+              visible={menuVisible}
+              onDismiss={() => setMenuVisible(false)}
+              anchor={
+                <TouchableOpacity
+                  onPress={() => setMenuVisible(true)}
+                  style={styles.menuButton}
+                >
+                  <Text style={styles.menuIcon}>⋮</Text>
+                </TouchableOpacity>
+              }
+            >
+              <Menu.Item onPress={handleLogout} title="Cerrar Sesión" />
+            </Menu>
           </View>
           <SearchInput
             value={searchTerm}
@@ -99,11 +130,19 @@ const HomeScreen = () => {
             onNavigate={handleNavigate}
           />
         </View>
-        <ResultsList results={filteredResults} onResultClick={handleResultClick} />
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary.main} />
+            <Text>Cargando resultados...</Text>
+          </View>
+        ) : (
+          <ResultsList results={filteredResults} onResultClick={handleResultClick} />
+        )}
       </View>
-    </>
+    </Provider>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,22 +155,33 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 24,
   },
   titleContainer: {
-    flexDirection: 'row', // Alinea título e imagen horizontalmente
-    justifyContent: 'space-between', // Espacio entre texto e imagen
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16, // Espaciado entre el título y el buscador
-    paddingEnd: 30,
+    marginBottom: 16,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.neutral.dark,
-    paddingLeft: 20,
   },
   logo: {
     width: 40,
     height: 40,
-    marginLeft: 10, // Agrega separación desde el margen izquierdo
+    marginLeft: 10,
+  },
+  menuButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  menuIcon: {
+    fontSize: 24,
+    color: colors.neutral.dark,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

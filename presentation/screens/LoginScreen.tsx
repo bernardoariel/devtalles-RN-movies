@@ -7,9 +7,11 @@ import {
   StyleSheet,
   Image,
   Alert,
+  StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { login } from '@/infrastructure/services/authService';
+import colors from '@/config/helpers/colors';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -23,7 +25,7 @@ const LoginScreen = () => {
     const result = await login(email, password);
 
     if (result.success) {
-      Alert.alert('Login exitoso', '¡Bienvenido!');
+      // Alert.alert('Login exitoso', '¡Bienvenido!');
       router.push('/home'); // Redirigir a la pantalla de búsqueda
     } else {
       Alert.alert('Error', 'Error al iniciar sesión. Revisa tus credenciales.');
@@ -32,46 +34,52 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('@/assets/images/logo.png')} // Asegúrate de agregar tu logo en assets
-        style={styles.logo}
-      />
+    <>
+      {/* Barra de estado personalizada */}
+      <StatusBar backgroundColor={colors.primary.main} barStyle="light-content" />
 
-      {/* Título */}
-      <Text style={styles.title}>Login</Text>
+      <View style={styles.container}>
+        {/* Logo */}
+        <Image
+          source={require('@/assets/images/logo.png')} // Asegúrate de agregar tu logo en assets
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+        {/* Título */}
+        <Text style={styles.title}>Login</Text>
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        {/* Email Input */}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-      {/* Botón de Login */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleLogin}
-        disabled={isLoading}
-      >
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Conectando...' : 'Conectarse'}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {/* Password Input */}
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* Botón de Login */}
+        <TouchableOpacity
+          style={[styles.button, isLoading && styles.buttonDisabled]}
+          onPress={handleLogin}
+          disabled={isLoading}
+        >
+          <Text style={styles.buttonText}>
+            {isLoading ? 'Conectando...' : 'Conectarse'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 };
 
@@ -80,13 +88,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFEFDC',
+    backgroundColor: colors.primary.main,
     padding: 16,
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 200,
+    height: 200,
     marginBottom: 32,
+    alignSelf: 'center',
   },
   title: {
     fontSize: 24,
@@ -111,6 +120,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#FFA726',
   },
   buttonText: {
     color: '#fff',
