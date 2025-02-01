@@ -70,8 +70,16 @@ const ProductScreen = () => {
             style={styles.gradient}
           />
           <View style={styles.backButton}>
-            <Pressable onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={30} color="#FF8C00" />
+            <Pressable onPress={() => router.back()}
+                 style={{  
+                  backgroundColor: 'rgba(255, 255, 255, 0.2)', // Naranja con transparencia
+                  borderWidth: 2, 
+                  borderColor: '#FFF', 
+                  borderRadius: 100, 
+                  marginStart: 15,
+                  padding: 2, // Espaciado interno para agrandar el área táctil
+                }}>
+              <Ionicons name="arrow-back" size={35} color="#FFF"  />
             </Pressable>
           </View>
         </View>
