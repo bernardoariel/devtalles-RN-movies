@@ -66,7 +66,7 @@ const ProductPricing = ({
   return (
     <ScrollView style={styles.container}>
       
-      <View style={styles.pricesContainer}>
+      <View >
         <Text style={styles.price}>Contado: {formatPrice(precioContado)}</Text>
         <Text style={styles.price}>Débito: {formatPrice(precioDebito)}</Text>
         <Text style={styles.price}>Lista: {formatPrice(precioLista)}</Text>
@@ -93,7 +93,11 @@ const ProductPricing = ({
                   <Text style={[styles.tableCell, styles.tableHeader]}>Total</Text>
                 </View>
                 {/* Filas */}
-                {group.map((tarjeta) => (
+                {group
+                 .filter((tarjeta) =>
+                  codTarjeta === 'CRE' ? [1, 3, 6, 12, 15, 18].includes(tarjeta.NCuota) : true
+                )
+                .map((tarjeta) => (
                   <View key={tarjeta.NCuota} style={styles.tableRow}>
                     <Text style={styles.tableCell}>{tarjeta.NCuota}</Text>
                     <Text style={styles.tableCell}>
