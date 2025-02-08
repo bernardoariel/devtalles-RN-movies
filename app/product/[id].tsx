@@ -39,7 +39,8 @@ const ProductScreen = () => {
     );
   }
 
-  const imageUrl = formatImageUrl(producto?.Imagen);
+  const imageUrl = formatImageUrl(producto?.Imagen ?? "");
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,7 +61,7 @@ const ProductScreen = () => {
         <ProductPricing
           Producto={producto.Producto}
           Precio={producto.Precio}
-          formaPagoPlanes={formaPagoPlanes}
+          formaPagoPlanes={formaPagoPlanes!}
           findFormaPagoById={findFormaPagoById}
         />
       </ScrollView>

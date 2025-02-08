@@ -9,21 +9,16 @@ const screenHight = Dimensions.get('window').height;
 const ProductHeader = ({ imageUrl, onBack, productCode }) => {
   return (
     <View style={styles.imageContainer}>
-      {imageUrl ? (
+     {/*  {imageUrl ? (
         <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
       ) : (
         <View style={styles.placeholder}>
           <Text style={styles.placeholderText}>Sin imagen</Text>
         </View>
-      )}
+      )} */}
 
       {/* Gradiente */}
-      <LinearGradient
-        colors={['rgba(0,0,0,0.5)', 'transparent']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.gradient}
-      />
+      
 
       {/* Badge del código del producto */}
       <View style={styles.badge}>
@@ -43,7 +38,7 @@ const ProductHeader = ({ imageUrl, onBack, productCode }) => {
 const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
-    height: screenHight * 0.4,
+    // height: screenHight * 0.4,
   },
   image: {
     width: '100%',
@@ -61,12 +56,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  gradient: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    zIndex: 1,
-  },
+  
   badge: {
     position: 'absolute',
     top: 10,

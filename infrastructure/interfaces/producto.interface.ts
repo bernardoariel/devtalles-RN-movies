@@ -8,5 +8,6 @@ export interface Producto {
     Precio: number;
     CodCategoria: number;
     CodMarca: number;
+    Sucursales?: any[];
   }
   

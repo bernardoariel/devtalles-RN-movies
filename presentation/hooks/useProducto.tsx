@@ -1,12 +1,11 @@
-
-import { useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query";
 import { abrilApi } from '../../app/core/api/movie-api';
 import { Producto } from "@/infrastructure/interfaces/producto.interface";
-
 
 interface Options {
   id: number;
 }
+
 export const getProductById = async (term: number | string): Promise<Producto> => {
   try {
     const { data } = await abrilApi.get<Producto>(`/productos/${term}`);
@@ -19,6 +18,7 @@ export const getProductById = async (term: number | string): Promise<Producto> =
     throw error;
   }
 };
+
 export const useProduct = ({ id }: Options) => {
   const {
     isLoading,
@@ -33,11 +33,13 @@ export const useProduct = ({ id }: Options) => {
     staleTime: 1000 * 60,
     retry: false,
   });
+
   return {
     error,
     isError,
     isFetching,
     isLoading,
-    producto: producto ?? [],
+    producto, // ✅ Ya no forzamos a que sea un array
   };
 };
+ 
