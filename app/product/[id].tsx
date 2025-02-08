@@ -12,6 +12,8 @@ import { useMarcas } from '@/presentation/hooks/useMarcas';
 import { useSucursales } from '@/presentation/hooks/useSucursales';
 import { formatImageUrl } from '@/config/helpers/url.helper';
 import ProductPricing from '@/presentation/components/products/productPricing';
+import colors from '@/config/helpers/colors';
+import { formatPrice } from '@/config/helpers/formatPrice';
 
 const ProductScreen = () => {
   const router = useRouter();
@@ -65,6 +67,9 @@ const ProductScreen = () => {
           findFormaPagoById={findFormaPagoById}
         />
       </ScrollView>
+      <View style={styles.fixedDetailsContainer}>
+        <Text style={styles.priceText}>Precio de lista {formatPrice(producto.Precio)}</Text>
+      </View>
     </View>
   );
 };
@@ -86,5 +91,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#d9534f',
     marginBottom: 10,
+  },
+  fixedDetailsContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.primary.main,
+    padding: 16,
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+  },
+  priceText: {
+    fontSize: 20, // Tamaño del texto del precio
+    fontWeight: 'bold', // Negrita para destacar el precio
+    color: colors.neutral.dark // Texto blanco
   },
 });
