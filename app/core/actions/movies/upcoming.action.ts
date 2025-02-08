@@ -10,7 +10,7 @@ export const upcomingMoviesAction = async()=>{
         const {data} = await abrilApi.get<MovieDBMoviesResponse>('/upcoming')
 
         const movies = data.results.map(MovieMapper.fromTheMovieDBToMovie)
-        console.log('movies::: ', movies);
+        // console.log('movies::: ', movies);
         
 
         return movies

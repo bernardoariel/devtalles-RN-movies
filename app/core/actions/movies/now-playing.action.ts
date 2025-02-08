@@ -10,7 +10,7 @@ export const nowPlayingAction = async()=>{
         const {data} = await abrilApi.get<MovieDBMoviesResponse>('/now_playing')
 
         const movies = data.results.map(MovieMapper.fromTheMovieDBToMovie)
-        console.log('movies::: ', movies);
+        // console.log('movies::: ', movies);
         
 
         return movies

@@ -60,7 +60,7 @@ const HomeScreen = () => {
     const trimmedTerm = searchTerm.trim();
 
     if (!trimmedTerm) {
-      console.log('El término de búsqueda está vacío.');
+      // console.log('El término de búsqueda está vacío.');
       return;
     }
 

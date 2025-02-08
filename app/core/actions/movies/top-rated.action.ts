@@ -18,7 +18,7 @@ export const topRatedMoviesAction = async({page=1,limit=10}:Options)=>{
         })
 
         const movies = data.results.map(MovieMapper.fromTheMovieDBToMovie)
-        console.log('movies::: ', movies);
+        // console.log('movies::: ', movies);
         
 
         return movies

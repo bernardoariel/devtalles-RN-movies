@@ -20,7 +20,7 @@ const getProductsByTerm = async (term: string): Promise<ProductsResponse[]> => {
 };
 export const getProductByMarcas = async ({ term }: GetProductsOptions) => {
   try {
-    console.log('Fetching marcas with term: ', term);
+    // console.log('Fetching marcas with term: ', term);
     const { data } = await abrilApi.get(`productos/${term}/marcas`);
     return data;
   } catch (error) {

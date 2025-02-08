@@ -9,7 +9,7 @@ export interface ProductsApiResponse {
 const getProducts = async (): Promise<ProductsResponse[]> => {
   try {
     const { data }: { data: ProductsApiResponse } = await abrilApi.get('/productos');
-    console.log('Respuesta completa de la API:', data);
+    // console.log('Respuesta completa de la API:', data);
 
     // Devuelve el array `result` si está presente; de lo contrario, un array vacío
     return Array.isArray(data.result) ? data.result : [];

@@ -10,7 +10,7 @@ export const popularMoviesAction = async()=>{
         const {data} = await abrilApi.get<MovieDBMoviesResponse>('/popular')
 
         const movies = data.results.map(MovieMapper.fromTheMovieDBToMovie)
-        console.log('movies::: ', movies);
+        // console.log('movies::: ', movies);
         
 
         return movies

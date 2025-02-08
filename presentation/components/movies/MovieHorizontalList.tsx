@@ -29,7 +29,7 @@ const MovieHorizontalList = ({movies, title,className,loadNextPage}:Props) => {
     if(!isEndReached) return
     isLoading.current = true
 
-    console.log('cargar siguientes peliculas')
+    // console.log('cargar siguientes peliculas')
     loadNextPage && loadNextPage();
     isLoading.current = false
   }

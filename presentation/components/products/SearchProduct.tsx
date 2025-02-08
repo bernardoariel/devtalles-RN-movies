@@ -30,7 +30,7 @@ const SearchProduct = () => {
     }, [])
   );
   useEffect(() => {
-    console.log('Resultados filtrados:', filteredResults);
+    // console.log('Resultados filtrados:', filteredResults);
   }, [filteredResults]);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
@@ -80,7 +80,7 @@ const SearchProduct = () => {
     const trimmedTerm = searchTerm.trim();
   
     if (!trimmedTerm) {
-      console.log("El término de búsqueda está vacío.");
+      // console.log("El término de búsqueda está vacío.");
       return; // No hacer nada si el término está vacío
     }
   
@@ -96,12 +96,12 @@ const SearchProduct = () => {
         params: { searchTerm: trimmedTerm },
       });
     }
-    console.log('Antes de limpiar:', searchTerm);
+    // console.log('Antes de limpiar:', searchTerm);
     setSearchTerm('');
-    console.log('Después de limpiar:', searchTerm);
+    // console.log('Después de limpiar:', searchTerm);
   };
   useEffect(() => {
-    console.log('searchTerm actualizado:', searchTerm);
+    // console.log('searchTerm actualizado:', searchTerm);
   }, [searchTerm]);
 
   const handleResultClick = (result: ProductsResponse) => {
