@@ -1,10 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import colors from '@/config/helpers/colors';
+import { Producto } from '@/infrastructure/interfaces/producto.interface';
 
-const ProductDetails = ({ producto, findMarcasById }) => {
+interface ProductDetailsProps {
+  producto: Producto;
+  findMarcasById: (id: number) => { Marca?: string } | undefined;
+}
+const ProductDetails: React.FC<ProductDetailsProps> = ({ producto, findMarcasById }) => {
   return (
-    <View style={styles.container}>
+    <View>
       <View style={styles.stockBadge}>
           <Text style={styles.stockBadgeText}>{producto.Stock > 0 ? `${producto.Stock} Unidades` : 'Sin stock'}</Text>
         </View>
@@ -12,7 +17,7 @@ const ProductDetails = ({ producto, findMarcasById }) => {
           <Text style={styles.productTitle}>{producto.Producto}</Text>
           <Text style={styles.productDescription}>{producto.Descripcion}</Text>
           <View style={styles.rowContainer}>
-            <Text style={[styles.detail, styles.whiteText]}>{producto.Medida}</Text>
+            <Text style={styles.whiteText}>{producto.Medida}</Text>
             <View style={styles.badgeContainer}>
               <Text style={styles.badgeText}>
                 {findMarcasById(producto.CodMarca)?.Marca || 'Desconocida'}
@@ -25,33 +30,7 @@ const ProductDetails = ({ producto, findMarcasById }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.neutral.dark,
-    padding: 16,
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.primary.light,
-  },
-  description: {
-    fontSize: 16,
-    color: colors.primary.dark,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  detail: {
-    fontSize: 16,
-    color: '#FFF',
-  },
-  brand: {
-    fontSize: 16,
-    color: colors.primary.light,
-  },
+
   stockBadge: {
     position: 'absolute',
     alignSelf: 'center',
@@ -90,10 +69,11 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%', // Asegura que ocupe todo el ancho del contenedor
     paddingHorizontal: 16, // Opcional: añade espacio a los lados
     paddingTop:5,
+    alignItems: 'center', // Centra verticalmente
   },
   whiteText: {
     backgroundColor: colors.neutral.dark,
@@ -110,6 +90,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4, // Espaciado vertical
     borderRadius: 12, // Bordes redondeados
     alignItems: 'center', // Centrar el texto
+    marginLeft:5
+  },
+  badgeText: {
+    color: colors.primary.light,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 
 });
