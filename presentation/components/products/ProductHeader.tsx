@@ -6,13 +6,23 @@ import colors from '@/config/helpers/colors';
 
 const screenHight = Dimensions.get('window').height;
 
-const ProductHeader = ({ onBack, productCode }) => {
+interface ProductHeaderProps {
+  onBack: () => void;  // Es una función que no retorna nada
+  productCode: string; // Es un string
+  imageUrl: string;
+}
+
+const ProductHeader: React.FC<ProductHeaderProps> = ({ imageUrl, onBack, productCode }) => {
   return (
     <View >
       {/* Botón de retroceso */}
       <View style={styles.backButton}>
         <Pressable onPress={onBack} style={styles.backPressable}>
-          <Ionicons name="arrow-back" size={35} color="#FFF" />
+        <Ionicons 
+          name="arrow-back" 
+          size={35} 
+          color={imageUrl ? "#FFF" : "#000"} 
+        />
         </Pressable>
       </View>
       {/* Badge del código del producto */}

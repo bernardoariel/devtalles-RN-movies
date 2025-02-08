@@ -48,7 +48,7 @@ const ProductScreen = () => {
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Header con imagen, botón de retroceso y código del producto */}
-        <ProductHeader onBack={() => router.back()} productCode={producto.CodProducto} />
+        <ProductHeader imageUrl={imageUrl} onBack={() => router.back()} productCode={producto.CodProducto} />
 
         {/* Imagen con opción de zoom */}
         <ProductImageViewer imageUrl={imageUrl} />

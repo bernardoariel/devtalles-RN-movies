@@ -6,7 +6,12 @@ import ImageViewing from 'react-native-image-viewing';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const ProductImageViewer = ({ imageUrl }) => {
+interface ProductImageViewerProps {
+  imageUrl: string; // La URL de la imagen es un string
+}
+
+const ProductImageViewer: React.FC<ProductImageViewerProps> = ({ imageUrl }) => {
+
   const [isImageVisible, setImageVisible] = useState(false);
 
   return (
