@@ -8,12 +8,18 @@ const ProductDetails = ({ producto, findMarcasById }) => {
       <View style={styles.stockBadge}>
           <Text style={styles.stockBadgeText}>{producto.Stock > 0 ? `${producto.Stock} Unidades` : 'Sin stock'}</Text>
         </View>
-      <Text style={styles.title}>{producto.Producto}</Text>
-      <Text style={styles.description}>{producto.Descripcion}</Text>
-      <View style={styles.row}>
-        <Text style={styles.detail}>{producto.Medida}</Text>
-        <Text style={styles.brand}>{findMarcasById(producto.CodMarca)?.Marca || 'Desconocida'}</Text>
-      </View>
+        <View style={styles.productInfoContainer}>
+          <Text style={styles.productTitle}>{producto.Producto}</Text>
+          <Text style={styles.productDescription}>{producto.Descripcion}</Text>
+          <View style={styles.rowContainer}>
+            <Text style={[styles.detail, styles.whiteText]}>{producto.Medida}</Text>
+            <View style={styles.badgeContainer}>
+              <Text style={styles.badgeText}>
+                {findMarcasById(producto.CodMarca)?.Marca || 'Desconocida'}
+              </Text>
+            </View>
+          </View>
+        </View>
     </View>
   );
 };
@@ -61,6 +67,49 @@ const styles = StyleSheet.create({
     color: colors.neutral.dark,
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  productInfoContainer: {
+    backgroundColor: colors.neutral.dark, // Asegúrate de que el contenedor tenga un fondo
+    alignItems: 'center',
+    padding: 16,
+    borderBottomLeftRadius: 24, // Redondear el borde inferior izquierdo
+    borderBottomRightRadius: 24, // Redondear el borde inferior derecho
+    overflow: 'hidden', // Garantiza que el contenido respete los bordes redondeados
+  },
+  productTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 8,
+    textAlign: 'center',
+    color: colors.primary.light,
+  },
+  productDescription: {
+    fontSize: 16,
+    color: colors.primary.dark,
+    textAlign: 'center',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%', // Asegura que ocupe todo el ancho del contenedor
+    paddingHorizontal: 16, // Opcional: añade espacio a los lados
+    paddingTop:5,
+  },
+  whiteText: {
+    backgroundColor: colors.neutral.dark,
+    color: '#fff', // Texto blanco
+    paddingHorizontal: 10, // Espaciado horizontal
+    borderColor: '#fff',
+    borderWidth: 1,
+    borderRadius: 12,
+  },
+  
+  badgeContainer: {
+    backgroundColor: colors.primary.main, // Fondo del badge
+    paddingHorizontal: 10, // Espaciado horizontal
+    paddingVertical: 4, // Espaciado vertical
+    borderRadius: 12, // Bordes redondeados
+    alignItems: 'center', // Centrar el texto
   },
 
 });
