@@ -1,3 +1,4 @@
+import colors from '@/config/helpers/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { View, Pressable, Image, StyleSheet, Text, Dimensions } from 'react-native';
@@ -21,7 +22,7 @@ const ProductImageViewer: React.FC<ProductImageViewerProps> = ({ imageUrl }) => 
           <>
             <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
             <LinearGradient
-              colors={['rgba(0,0,0,0.5)', 'transparent']}
+              colors={[colors.primary.light, 'transparent']}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
               style={styles.gradient}
@@ -76,9 +77,11 @@ const styles = StyleSheet.create({
   gradient: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: '30%', // Ocupa solo el 30% superior
+    top: 0, // Lo pega arriba
     zIndex: 1,
   },
+  
 });
 
 export default ProductImageViewer;

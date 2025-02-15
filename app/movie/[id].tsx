@@ -5,6 +5,7 @@ import { useProduct } from '../../presentation/hooks/useProducto';
 import { LinearGradient } from 'expo-linear-gradient'; // Importamos LinearGradient
 import { Ionicons } from '@expo/vector-icons'; // Importamos Ionicons para el ícono de volver
 import { formatImageUrl } from '../../config/helpers/url.helper';
+import colors from '@/config/helpers/colors';
 
 const screenHight = Dimensions.get('window').height;
 
@@ -45,7 +46,7 @@ const ProductScreen = () => {
         />
         {/* Gradiente */}
         <LinearGradient
-          colors={['rgba(255,165,0,0.3)', 'transparent']}
+          colors={[colors.primary.main, 'transparent']}
           start={{ x: 0, y: 0 }} // Esquina superior izquierda
           end={{ x: 0.5, y: 0.5 }} // Se desvanece hacia el primer cuarto
           style={styles.gradient}

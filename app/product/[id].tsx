@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Share, Modal } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useProduct } from '../../presentation/hooks/useProducto';
-import ProductHeader from '@/presentation/components/products/ProductHeader';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import ProductImageViewer from '@/presentation/components/products/ProductImageViewer';
 import ProductDetails from '@/presentation/components/products/ProductDetails';
 import ProductAvailability from '@/presentation/components/products/ProductAvailability';
@@ -14,12 +15,12 @@ import { formatImageUrl } from '@/config/helpers/url.helper';
 import ProductPricing from '@/presentation/components/products/productPricing';
 import colors from '@/config/helpers/colors';
 import { formatPrice } from '@/config/helpers/formatPrice';
-import { Button } from 'react-native-paper';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@/presentation/components/common/Header';
+import { FlatList } from 'react-native-gesture-handler';
 
 const ProductScreen = () => {
   const router = useRouter();
@@ -35,11 +36,11 @@ const ProductScreen = () => {
 
   const handleTextShare = async () => {
     const message = `
-      *${producto.Producto}*
-      ${producto.Descripcion}
-      📏 Medida: ${producto.Medida}
-      💰 Precio: ${formatPrice(producto.Precio)}
-      🏪 Stock: ${producto.Stock > 0 ? `${producto.Stock} unidades` : 'Sin stock'}
+      *${producto!.Producto}*
+      ${producto!.Descripcion}
+      📏 Medida: ${producto!.Medida}
+      💰 Precio: ${formatPrice(producto!.Precio)}
+      🏪 Stock: ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}
     `;
 
     await Share.share({ message });
@@ -53,11 +54,11 @@ const ProductScreen = () => {
       const html = `
         <html>
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
-            <h1>${producto.Producto}</h1>
-            <p>${producto.Descripcion}</p>
-            <p><strong>Medida:</strong> ${producto.Medida}</p>
-            <p><strong>Precio:</strong> ${formatPrice(producto.Precio)}</p>
-            <p><strong>Stock:</strong> ${producto.Stock > 0 ? `${producto.Stock} unidades` : 'Sin stock'}</p>
+            <h1>${producto!.Producto}</h1>
+            <p>${producto!.Descripcion}</p>
+            <p><strong>Medida:</strong> ${producto!.Medida}</p>
+            <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
+            <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
             <img src="${imageUri.uri}" style="width: 100%; height: auto; margin-top: 10px; border-radius: 10px;" />
           </body>
         </html>
@@ -95,59 +96,42 @@ const ProductScreen = () => {
     router.replace('/login');
   };
   return (
-    <View style={{ flex: 1 }}>
-      <Header
-        title={producto.Producto}
-        onLogout={handleLogout}
-        onBackPress={() => router.back()}
-        titleSize={12}
-        showSearch={false}
-        extraMenuItems={[
-          { label: 'Compartir como Texto', action: handleTextShare, icon: 'share-variant' },
-          { label: 'Compartir como PDF', action: handlePDFShare, icon: 'file' },
-        ]}
-      />
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} style={styles.scrollView}>
-
-        {/* Imagen con opción de zoom */}
-        <ProductImageViewer imageUrl={imageUrl} />
-
-        {/* Detalles del producto */}
-        <ProductDetails producto={producto} findMarcasById={findMarcasById} />
-
-        {/* Disponibilidad en sucursales */}
-        <ProductAvailability sucursales={producto.Sucursales} findSucursalById={findSucursalById} />
-
-        {/* Precios y métodos de pago */}
-        <ProductPricing
-          Producto={producto.Producto}
-          Precio={producto.Precio}
-          formaPagoPlanes={formaPagoPlanes!}
-          findFormaPagoById={findFormaPagoById}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <Header
+          title={producto.Producto}
+          onLogout={handleLogout}
+          onBackPress={() => router.back()}
+          titleSize={12}
+          showSearch={false}
+          extraMenuItems={[
+            { label: 'Compartir como Texto', action: handleTextShare, icon: 'share-variant' },
+            { label: 'Compartir como PDF', action: handlePDFShare, icon: 'file' },
+          ]}
         />
-      </ScrollView>
-      <View style={styles.fixedDetailsContainer}>
-        <Text style={styles.priceText}>Precio de lista {formatPrice(producto.Precio)}</Text>
-      </View>
-
-      {/* Modal para elegir el tipo de compartición */}
-      <Modal visible={modalVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>¿Cómo quieres compartir?</Text>
-            <Button mode="contained" onPress={handleTextShare} style={{ marginVertical: 10 }}>
-              Compartir como Texto
-            </Button>
-            <Button mode="contained" onPress={handlePDFShare} style={{ marginVertical: 10 }}>
-              Compartir como PDF
-            </Button>
-            <Button mode="outlined" onPress={() => setModalVisible(false)}>
-              Cancelar
-            </Button>
-          </View>
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <ProductImageViewer imageUrl={imageUrl} />
+              <ProductDetails producto={producto} findMarcasById={findMarcasById} />
+              <ProductAvailability sucursales={producto.Sucursales} findSucursalById={findSucursalById} />
+              <ProductPricing
+                Producto={producto.Producto}
+                Precio={producto.Precio}
+                formaPagoPlanes={formaPagoPlanes!}
+                findFormaPagoById={findFormaPagoById}
+              />
+            </>
+          }
+          data={[]} // No necesitamos datos porque solo usamos el encabezado
+          renderItem={null}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        />
+        <View style={styles.fixedDetailsContainer}>
+          <Text style={styles.priceText}>Precio de lista {formatPrice(producto.Precio)}</Text>
         </View>
-      </Modal>
-    </View>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
