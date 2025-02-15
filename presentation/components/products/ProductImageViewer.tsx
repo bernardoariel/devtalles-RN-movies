@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: screenHeight * 0.4, // Ajuste dinámico según el tamaño de pantalla
+     overflow: 'hidden'
   },
   imagePressable: {
     width: '100%',

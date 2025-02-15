@@ -5,8 +5,10 @@ import { useRouter } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
 import ProductCard from './productCard';
 import { formatImageUrl } from '@/config/helpers/url.helper';
-import Header from '@/presentation/components/products/HeaderComponent';
+
 import { useMarcas } from '@/presentation/hooks/useMarcas';
+import Header from '@/presentation/components/common/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProductsList = () => {
   const [selectedMarca, setSelectedMarca] = useState<number | null>(null);
@@ -33,14 +35,20 @@ const ProductsList = () => {
   const countProductsByMarca = (CodMarca: number) => {
     return productos.filter((prod) => prod.CodMarca === CodMarca).length;
   };
-
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.replace('/login');
+  };
   return (
     <View style={styles.container}>
       {/* Botones de marcas */}
       <Header
-        title="Lista de Productos"
-        onBackPress={() => router.back()} // Acción para regresar
+        title="Lista de Productos!"
+        onLogout={handleLogout}
+        onBackPress={() => router.back()}
+        showSearch={false}
       />
+
       <ScrollView
         horizontal
         style={styles.marcasContainer}

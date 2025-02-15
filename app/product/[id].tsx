@@ -18,6 +18,8 @@ import { Button } from 'react-native-paper';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Header from '@/presentation/components/common/Header';
 
 const ProductScreen = () => {
   const router = useRouter();
@@ -88,17 +90,24 @@ const ProductScreen = () => {
       </View>
     );
   }
-
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    router.replace('/login');
+  };
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Header con imagen, botón de retroceso y código del producto */}
-        <ProductHeader imageUrl={imageUrl} onBack={() => router.back()} productCode={producto.CodProducto} />
-
-        {/* Botón de Compartir */}
-        <Button mode="contained" onPress={() => setModalVisible(true)} color={colors.primary.main} style={{ margin: 16 }}>
-          Compartir
-        </Button>
+      <Header
+        title={producto.Producto}
+        onLogout={handleLogout}
+        onBackPress={() => router.back()}
+        titleSize={12}
+        showSearch={false}
+        extraMenuItems={[
+          { label: 'Compartir como Texto', action: handleTextShare, icon: 'share-variant' },
+          { label: 'Compartir como PDF', action: handlePDFShare, icon: 'file' },
+        ]}
+      />
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }} style={styles.scrollView}>
 
         {/* Imagen con opción de zoom */}
         <ProductImageViewer imageUrl={imageUrl} />
@@ -145,6 +154,9 @@ const ProductScreen = () => {
 export default ProductScreen;
 
 const styles = StyleSheet.create({
+  scrollView: {
+  marginTop: -16, // Empuja la imagen hacia arriba para que se superponga con el Header
+},
   center: {
     flex: 1,
     justifyContent: 'center',
