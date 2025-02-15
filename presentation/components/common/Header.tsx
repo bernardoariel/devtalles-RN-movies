@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import colors from '@/config/helpers/colors';
 import SearchInput from '@/presentation/components/products/SearchInput';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   searchTerm?: string;
@@ -14,7 +15,8 @@ interface Props {
   showSearch?: boolean;
   onBackPress?: () => void;
   titleSize?: number;
-  extraMenuItems?: { label: string; action: () => void; icon?: string }[];
+  extraMenuItems?: { label: string; action: () => void; icon?: React.ReactNode }[];
+
 }
 
 const Header = ({
@@ -36,7 +38,7 @@ const Header = ({
       <View style={styles.titleContainer}>
         {onBackPress && (
           <TouchableOpacity onPress={onBackPress}>
-            <Text style={styles.backButton}>←</Text>
+            <Ionicons name="arrow-back" size={28} color="#fff" />
           </TouchableOpacity>
         )}
         <Image
@@ -55,7 +57,8 @@ const Header = ({
       onPress={() => setMenuVisible(true)}
       style={styles.menuButton}
     >
-      <Text style={styles.menuIcon}>⋮</Text>
+      <Ionicons name="ellipsis-vertical" size={28} color={colors.neutral.dark} />
+
     </TouchableOpacity>
   }
 >
@@ -70,7 +73,7 @@ const Header = ({
         }, 100);
       }}
       title={item.label}
-      leadingIcon={item.icon} // Icono del lado izquierdo
+      leadingIcon={() => item.icon}// Icono del lado izquierdo
     />
   ))}
 

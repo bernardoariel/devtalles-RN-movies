@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 20, // Totalmente redondeado
     paddingHorizontal: 10,
     height: 40,
+    marginTop:10
   },
   input: {
     flex: 1,

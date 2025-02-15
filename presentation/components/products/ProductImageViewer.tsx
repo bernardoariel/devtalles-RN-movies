@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   gradient: {
     position: 'absolute',
     width: '100%',
-    height: '30%', // Ocupa solo el 30% superior
+    height: '10%', // Ocupa solo el 30% superior
     top: 0, // Lo pega arriba
     zIndex: 1,
   },

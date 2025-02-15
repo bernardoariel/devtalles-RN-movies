@@ -43,7 +43,7 @@ const ProductsList = () => {
     <View style={styles.container}>
       {/* Botones de marcas */}
       <Header
-        title="Lista de Productos!"
+        title="Lista de Productos"
         onLogout={handleLogout}
         onBackPress={() => router.back()}
         showSearch={false}

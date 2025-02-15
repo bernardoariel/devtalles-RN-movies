@@ -21,6 +21,7 @@ import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@/presentation/components/common/Header';
 import { FlatList } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
 
 const ProductScreen = () => {
   const router = useRouter();
@@ -105,8 +106,9 @@ const ProductScreen = () => {
           titleSize={12}
           showSearch={false}
           extraMenuItems={[
-            { label: 'Compartir como Texto', action: handleTextShare, icon: 'share-variant' },
-            { label: 'Compartir como PDF', action: handlePDFShare, icon: 'file' },
+            { label: 'Compartir como Texto', action: handleTextShare, icon: <Ionicons name="share-social" size={24} color="#555" /> },
+{ label: 'Compartir como PDF', action: handlePDFShare, icon: <Ionicons name="document-text" size={24} color="#555" /> },
+
           ]}
         />
         <FlatList
