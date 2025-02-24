@@ -16,35 +16,32 @@ const ProductImageViewer: React.FC<ProductImageViewerProps> = ({ imageUrl }) => 
   const [isImageVisible, setImageVisible] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <Pressable onPress={() => setImageVisible(true)} style={styles.imagePressable}>
-        {imageUrl ? (
-          <>
-            <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
-            <LinearGradient
-              colors={[colors.primary.light, 'transparent']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.gradient}
-            />
-          </>
-          
-        ) : (
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Sin imagen</Text>
-          </View>
-        )}
-      </Pressable>
-      
-      <ImageViewing
-        images={[{ uri: imageUrl }]}
-        imageIndex={0}
-        visible={isImageVisible}
-        onRequestClose={() => setImageVisible(false)}
+    <View style={[styles.container, !imageUrl && styles.containerPlaceholder]}>
+
+  {imageUrl ? (
+    <Pressable onPress={() => setImageVisible(true)} style={styles.imagePressable}>
+      <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+      <LinearGradient
+        colors={[colors.primary.light, 'transparent']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.gradient}
       />
-      
+    </Pressable>
+  ) : (
+    <View style={styles.placeholder}>
+      <Text style={styles.placeholderText}>Sin imagen</Text>
     </View>
-  );
+  )}
+
+  <ImageViewing
+    images={[{ uri: imageUrl }]}
+    imageIndex={0}
+    visible={isImageVisible}
+    onRequestClose={() => setImageVisible(false)}
+  />
+</View>
+  )
 };
 
 const styles = StyleSheet.create({
@@ -80,7 +77,10 @@ const styles = StyleSheet.create({
     height: '10%', // Ocupa solo el 30% superior
     top: 0, // Lo pega arriba
     zIndex: 1,
+  },containerPlaceholder: {
+    height: 100, // O el tamaño que quieras
   },
+  
   
 });
 

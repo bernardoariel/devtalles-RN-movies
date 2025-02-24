@@ -12,11 +12,13 @@ import {
 import { useRouter } from 'expo-router';
 import { login } from '@/infrastructure/services/authService';
 import colors from '@/config/helpers/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const router = useRouter();
 
@@ -60,13 +62,25 @@ const LoginScreen = () => {
         />
 
         {/* Password Input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.inputContainer}>
+  <TextInput
+    style={styles.input}
+    placeholder="Password"
+    value={password}
+    onChangeText={setPassword}
+    secureTextEntry={!isPasswordVisible}
+  />
+  <TouchableOpacity
+    onPress={() => setPasswordVisible(!isPasswordVisible)}
+    style={styles.eyeButton}
+  >
+    <Ionicons
+      name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
+      size={24}
+      color="#999"
+    />
+  </TouchableOpacity>
+</View>
 
         {/* Botón de Login */}
         <TouchableOpacity
@@ -128,6 +142,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  inputContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
   },
 });
 

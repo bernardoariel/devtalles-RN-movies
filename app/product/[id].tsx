@@ -50,17 +50,20 @@ const ProductScreen = () => {
 
   const handlePDFShare = async () => {
     try {
-      const imageUri = await FileSystem.downloadAsync(imageUrl, FileSystem.cacheDirectory + 'producto.jpg');
-
+      const fileUri = FileSystem.cacheDirectory + 'producto.jpg';
+    await FileSystem.downloadAsync(imageUrl, fileUri);
+    const base64Image = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
       const html = `
         <html>
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
             <h1>${producto!.Producto}</h1>
+            <h1>${producto!.CodProducto}</h1>
             <p>${producto!.Descripcion}</p>
             <p><strong>Medida:</strong> ${producto!.Medida}</p>
             <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
-            <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
-            <img src="${imageUri.uri}" style="width: 100%; height: auto; margin-top: 10px; border-radius: 10px;" />
+            <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades!` : 'Sin stock'}</p>
+            <img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />
+
           </body>
         </html>
       `;

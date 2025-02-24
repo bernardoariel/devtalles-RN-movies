@@ -13,8 +13,13 @@ export const login = async (email: string, password: string) => {
 
     return { success: true, data: response.data };
   } catch (error: any) {
-    console.error('Error al iniciar sesión:', error);
-    return { success: false, error: error.response?.data || 'Error desconocido' };
+    if (error.response) {
+      console.error('Error al iniciar sesión, status:', error.response.status);
+      console.error('Detalle del error:', error.response.data);
+      return { success: false, error: error.response.data };
+    }
+    console.error('Error al iniciar sesión:', error.message);
+    return { success: false, error: 'Error desconocido' };
   }
 };
 
