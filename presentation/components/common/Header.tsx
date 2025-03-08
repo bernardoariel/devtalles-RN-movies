@@ -46,7 +46,7 @@ const Header = ({
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={[styles.title, { fontSize: titleSize ?? 20 }]}>
+        <Text style={[styles.title, { fontSize: titleSize ?? 16 }]}>
   {title}
 </Text>
 <Menu
