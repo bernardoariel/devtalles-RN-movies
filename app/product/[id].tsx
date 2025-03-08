@@ -43,8 +43,9 @@ const ProductScreen = () => {
       📏 Medida: ${producto!.Medida}
       💰 Precio: ${formatPrice(producto!.Precio)}
       🏪 Stock: ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}
-      
+
       📅 Fecha de consulta: ${fecha}
+      ❤️ Abril vive en vos!!!
       Sujeto a modificación sin previo aviso
     `;
   
@@ -84,7 +85,7 @@ const handlePDFShare = async () => {
           <p><strong>Fecha de consulta:</strong> ${fecha}</p>
           
           ${base64Image ? `<img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />` : ""}
-          
+          <p style="font-size: 16px; color: #FF8C00; margin-top: 20px;">❤️ Abril vive en vos!!!</p>
           <p style="font-size: 10px; color: #777; margin-top: 10px;">Sujeto a modificación sin previo aviso</p>
         </body>
       </html>
