@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@/presentation/components/common/Header';
 import { FlatList } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
-
+import * as MediaLibrary from 'expo-media-library';
 const ProductScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -51,42 +51,55 @@ const ProductScreen = () => {
     await Share.share({ message });
     setModalVisible(false);
   };
-  
 
-  const handlePDFShare = async () => {
-    try {
-      const fecha = new Date().toLocaleDateString();
-      const fileUri = FileSystem.cacheDirectory + 'producto.jpg';
-      await FileSystem.downloadAsync(imageUrl, fileUri);
-      const base64Image = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
-  
-      const html = `
-        <html>
-          <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
-            <h1>${producto!.Producto}</h1>
-            <h2>${producto!.CodProducto}</h2>
-            <p>${producto!.Descripcion}</p>
-            <p><strong>Medida:</strong> ${producto!.Medida}</p>
-            <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
-            <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades!` : 'Sin stock'}</p>
-            <p><strong>Fecha de consulta:</strong> ${fecha}</p>
-            <img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />
-            <p style="font-size: 10px; color: #777; margin-top: 10px;">Sujeto a modificación sin previo aviso</p>
-          </body>
-        </html>
-      `;
-  
-      const { uri } = await Print.printToFileAsync({ html });
-  
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri);
+
+const handlePDFShare = async () => {
+  try {
+    const fecha = new Date().toLocaleDateString();
+
+    let base64Image = null; // Variable para la imagen en base64
+    const fileUri = FileSystem.documentDirectory + 'producto.jpg';
+
+    // Verificar si la URL de la imagen es válida
+    if (imageUrl && imageUrl.startsWith("http")) {
+      try {
+        await FileSystem.downloadAsync(imageUrl, fileUri);
+        base64Image = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
+      } catch (error) {
+        console.warn("No se pudo descargar la imagen, se generará el PDF sin ella.");
       }
-    } catch (error) {
-      console.error('Error al compartir PDF:', error);
+    } else {
+      console.warn("URL de imagen no válida, se generará el PDF sin imagen.");
     }
-    setModalVisible(false);
-  };
-  
+
+    const html = `
+      <html>
+        <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+          <h1>${producto!.Producto}</h1>
+          <h2>${producto!.CodProducto}</h2>
+          <p>${producto!.Descripcion}</p>
+          <p><strong>Medida:</strong> ${producto!.Medida}</p>
+          <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
+          <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
+          <p><strong>Fecha de consulta:</strong> ${fecha}</p>
+          
+          ${base64Image ? `<img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />` : ""}
+          
+          <p style="font-size: 10px; color: #777; margin-top: 10px;">Sujeto a modificación sin previo aviso</p>
+        </body>
+      </html>
+    `;
+
+    const { uri } = await Print.printToFileAsync({ html });
+
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(uri);
+    }
+  } catch (error) {
+    console.error('Error al compartir PDF:', error);
+  }
+  setModalVisible(false);
+};
 
   if (isLoading) {
     return (
