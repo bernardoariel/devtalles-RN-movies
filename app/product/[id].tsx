@@ -23,12 +23,14 @@ import Header from '@/presentation/components/common/Header';
 import { FlatList } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
+import useProductPricing from '@/presentation/hooks/useProductPrecing';
 const ProductScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const { formaPagoPlanes } = useFormaPagoPlanes();
   const { findFormaPagoById } = useFormaPago();
   const { producto, isLoading, isError } = useProduct({ id: Number(id) });
+  const { precios, preciosFormateados } = useProductPricing(producto?.Precio ?? 0);
   const { findMarcasById } = useMarcas();
   const { findSucursalById } = useSucursales();
   
@@ -36,14 +38,16 @@ const ProductScreen = () => {
   const imageUrl = formatImageUrl(producto?.Imagen ?? "");
 
   const handleTextShare = async () => {
-    const fecha = new Date().toLocaleDateString(); // Obtener la fecha actual
+    const fecha = new Date().toLocaleDateString();
     const message = `
       *${producto!.Producto}*
       ${producto!.Descripcion}
       📏 Medida: ${producto!.Medida}
-      💰 Precio: ${formatPrice(producto!.Precio)}
+      💰 Lista: ${preciosFormateados.lista}
+      💳 Débito: ${preciosFormateados.debito}
+      💵 Contado: ${preciosFormateados.contado}
       🏪 Stock: ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}
-
+  
       📅 Fecha de consulta: ${fecha}
       ❤️ Abril vive en vos!!!
       Sujeto a modificación sin previo aviso
@@ -52,7 +56,8 @@ const ProductScreen = () => {
     await Share.share({ message });
     setModalVisible(false);
   };
-
+  
+ 
 
 const handlePDFShare = async () => {
   try {
@@ -79,12 +84,13 @@ const handlePDFShare = async () => {
           <h1>${producto!.Producto}</h1>
           <h2>${producto!.CodProducto}</h2>
           <p>${producto!.Descripcion}</p>
-          <p><strong>Medida:</strong> ${producto!.Medida}</p>
-          <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
-          <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
-          <p><strong>Fecha de consulta:</strong> ${fecha}</p>
+          <p><strong> 📏 Medida:</strong> ${producto!.Medida}</p>
+          <p><strong> 💰 Precios:</strong> Lista ${preciosFormateados.lista} | Débito ${preciosFormateados.debito} | Contado ${preciosFormateados.contado}</p>
+          <p><strong> 🏪 Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
+          <p><strong> 📅 Fecha de consulta:</strong> ${fecha}</p>
           
           ${base64Image ? `<img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />` : ""}
+          
           <p style="font-size: 16px; color: #FF8C00; margin-top: 20px;">❤️ Abril vive en vos!!!</p>
           <p style="font-size: 10px; color: #777; margin-top: 10px;">Sujeto a modificación sin previo aviso</p>
         </body>
@@ -132,9 +138,15 @@ const handlePDFShare = async () => {
           titleSize={12}
           showSearch={false}
           extraMenuItems={[
-            { label: 'Compartir como Texto', action: handleTextShare, icon: <Ionicons name="share-social" size={24} color="#555" /> },
-{ label: 'Compartir como PDF', action: handlePDFShare, icon: <Ionicons name="document-text" size={24} color="#555" /> },
-
+            { 
+              label: 'Compartir como Texto', 
+              action: handleTextShare, 
+              icon: <Ionicons name="share-social" size={24} color="#555" /> 
+            },{ 
+              label: 'Compartir como PDF',
+              action: handlePDFShare,
+              icon: <Ionicons name="document-text" size={24} color="#555" />
+            }
           ]}
         />
         <FlatList
