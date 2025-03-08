@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { formatPrice } from '@/config/helpers/formatPrice';
 import colors from '@/config/helpers/colors';
+import useProductPricing from '@/presentation/hooks/useProductPrecing';
+
 
 interface FormaPagoPlan {
   CodForPago: string;
@@ -20,33 +22,29 @@ interface ProductPricingProps {
   findFormaPagoById: (id: string) => { FormaPago: string } | undefined;
 }
 
-const ProductPricing = ({
-  Producto,
-  Precio,
-  formaPagoPlanes,
-  findFormaPagoById,
-}: ProductPricingProps) => {
-  const precioLista = Precio;
-  const precioContado = precioLista * 0.82; // 18% de descuento
-  const precioDebito = precioLista * 0.9; // 10% de descuento
+const ProductPricing = ({ Producto, Precio, formaPagoPlanes, findFormaPagoById }: ProductPricingProps) => {
+  const { preciosFormateados } = useProductPricing(Precio);
+
   const arrayCreditos = ['CRE', 'TNA', 'TNP', 'TVI']; // Códigos de crédito permitidos
 
   // Agrupar planes de pago por código de forma de pago
-  const groupedTarjetas: GroupedTarjetas = formaPagoPlanes.reduce(
+  const groupedTarjetas: GroupedTarjetas = formaPagoPlanes.reduce<GroupedTarjetas>(
     (acc, tarjeta) => {
       if (arrayCreditos.includes(tarjeta.CodForPago)) {
-        if (!acc[tarjeta.CodForPago]) acc[tarjeta.CodForPago] = [];
+        if (!acc[tarjeta.CodForPago]) {
+          acc[tarjeta.CodForPago] = []; // Ahora TypeScript reconoce que es un array
+        }
         acc[tarjeta.CodForPago].push(tarjeta);
       }
       return acc;
     },
-    {}
+    {} as GroupedTarjetas // Inicializamos el acumulador con el tipo correcto
   );
 
   // Calcular el total para cada tarjeta
   const calculateTotal = (tarjeta: FormaPagoPlan) => {
     const cuota =
-      (precioLista * (1 + (tarjeta.Interes / 100) * tarjeta.NCuota)) /
+      (Precio * (1 + (tarjeta.Interes / 100) * tarjeta.NCuota)) /
       tarjeta.NCuota;
     return cuota * tarjeta.NCuota;
   };
@@ -69,15 +67,15 @@ const ProductPricing = ({
       <View style={styles.priceContainer}>
         <View style={styles.priceBox}>
           <Text style={styles.priceTitle}>Contado</Text>
-          <Text style={styles.priceValue}>{formatPrice(precioContado)}</Text>
+          <Text style={styles.priceValue}>{preciosFormateados.contado}</Text>
         </View>
         <View style={styles.priceBox}>
           <Text style={styles.priceTitle}>Débito</Text>
-          <Text style={styles.priceValue}>{formatPrice(precioDebito)}</Text>
+          <Text style={styles.priceValue}>{preciosFormateados.debito}</Text>
         </View>
         <View style={styles.priceBox}>
           <Text style={styles.priceTitle}>Lista</Text>
-          <Text style={styles.priceValue}>{formatPrice(precioLista)}</Text>
+          <Text style={styles.priceValue}>{preciosFormateados.lista}</Text>
         </View>
       </View>
 
@@ -113,8 +111,8 @@ const ProductPricing = ({
                       <Text style={styles.tableCell}>
                         {formatPrice(
                           tarjeta.NCuota === 1
-                            ? precioLista * (1 + tarjeta.Interes / 100)
-                            : (precioLista *
+                            ? Precio * (1 + tarjeta.Interes / 100)
+                            : (Precio *
                                 (1 + (tarjeta.Interes / 100) * tarjeta.NCuota)) /
                               tarjeta.NCuota
                         )}
@@ -136,7 +134,6 @@ const ProductPricing = ({
 const styles = StyleSheet.create({
   container: {
     padding: 16,
- 
   },
   priceContainer: {
     flexDirection: 'row',
@@ -166,8 +163,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: colors.neutral.dark,
     borderRadius: 8,
-    width: '100%', // Hace que el card no ocupe todo el ancho, sino el 90% del contenedor
-    maxWidth: 400, // Evita que se expanda demasiado en pantallas grandes
+    width: '100%',
+    maxWidth: 400,
     alignSelf: 'center',
   },
   cardTitle: {
