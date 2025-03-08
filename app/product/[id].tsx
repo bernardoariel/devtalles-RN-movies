@@ -36,40 +36,48 @@ const ProductScreen = () => {
   const imageUrl = formatImageUrl(producto?.Imagen ?? "");
 
   const handleTextShare = async () => {
+    const fecha = new Date().toLocaleDateString(); // Obtener la fecha actual
     const message = `
       *${producto!.Producto}*
       ${producto!.Descripcion}
       📏 Medida: ${producto!.Medida}
       💰 Precio: ${formatPrice(producto!.Precio)}
       🏪 Stock: ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}
+      
+      📅 Fecha de consulta: ${fecha}
+      Sujeto a modificación sin previo aviso
     `;
-
+  
     await Share.share({ message });
     setModalVisible(false);
   };
+  
 
   const handlePDFShare = async () => {
     try {
+      const fecha = new Date().toLocaleDateString();
       const fileUri = FileSystem.cacheDirectory + 'producto.jpg';
-    await FileSystem.downloadAsync(imageUrl, fileUri);
-    const base64Image = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
+      await FileSystem.downloadAsync(imageUrl, fileUri);
+      const base64Image = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.Base64 });
+  
       const html = `
         <html>
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
             <h1>${producto!.Producto}</h1>
-            <h1>${producto!.CodProducto}</h1>
+            <h2>${producto!.CodProducto}</h2>
             <p>${producto!.Descripcion}</p>
             <p><strong>Medida:</strong> ${producto!.Medida}</p>
             <p><strong>Precio:</strong> ${formatPrice(producto!.Precio)}</p>
             <p><strong>Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades!` : 'Sin stock'}</p>
+            <p><strong>Fecha de consulta:</strong> ${fecha}</p>
             <img src="data:image/jpeg;base64,${base64Image}" style="width: 50%; height: auto; margin-top: 10px; border-radius: 10px;" />
-
+            <p style="font-size: 10px; color: #777; margin-top: 10px;">Sujeto a modificación sin previo aviso</p>
           </body>
         </html>
       `;
-
+  
       const { uri } = await Print.printToFileAsync({ html });
-
+  
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri);
       }
@@ -78,6 +86,7 @@ const ProductScreen = () => {
     }
     setModalVisible(false);
   };
+  
 
   if (isLoading) {
     return (
