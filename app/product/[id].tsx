@@ -44,24 +44,28 @@ const ProductScreen = () => {
 
   const handleTextShare = async () => {
     const fecha = new Date().toLocaleDateString();
-
+  
     const cuotasText = selectedCuotas.length
-      ? `- * - * - *\n${selectedCuotas.map(c => `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`).join("\n")}\n`
+      ? `- * - * - *\n${selectedCuotas.map(c => {
+          const formaPagoNombre = findFormaPagoById(c.formaPago)?.FormaPago || "Forma de pago desconocida";
+          return `${c.NCuota} cuotas de ${c.total} - ${formaPagoNombre}`;
+        }).join("\n")}\n`
       : "";
-
+  
     const message = `
       *${producto!.Producto}*
       ${producto!.Descripcion}
-      📏 Medida: ${producto!.Medida}
+      📏 Medida: ${producto!.Medida} | 🏷️ Marca: ${findMarcasById(producto!.CodMarca)?.Marca || "Sin marca"}
       💰 Lista: ${preciosFormateados.lista} | 💳 Débito: ${preciosFormateados.debito} | 💵 Contado: ${preciosFormateados.contado}
       ${cuotasText}
       📅 Fecha de consulta: ${fecha}
       ❤️ Abril vive en vos!!!
       Sujeto a modificación sin previo aviso
     `;
-
+  
     await Share.share({ message });
   };
+  
 
   const handlePDFShare = async () => {
     try {
@@ -82,13 +86,14 @@ const ProductScreen = () => {
         ? `<hr/><p>${selectedCuotas.map(c => `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`).join("<br/>")}</p>`
         : "";
 
-      const html = `
+        const html = `
         <html>
           <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+            <h2>Presupuesto - Fecha: ${fecha}</h2>
             <h1>${producto!.Producto}</h1>
             <h2>${producto!.CodProducto}</h2>
             <p>${producto!.Descripcion}</p>
-            <p><strong> 📏 Medida:</strong> ${producto!.Medida}</p>
+            <p><strong> 📏 Medida:</strong> ${producto!.Medida} | 🏷️ <strong>Marca:</strong> ${findMarcasById(producto!.CodMarca)?.Marca || "Sin marca"}</p>
             <p><strong> 💰 Precios:</strong> Lista ${preciosFormateados.lista} | Débito ${preciosFormateados.debito} | Contado ${preciosFormateados.contado}</p>
             <p><strong> 🏪 Stock:</strong> ${producto!.Stock > 0 ? `${producto!.Stock} unidades` : 'Sin stock'}</p>
             <p><strong> 📅 Fecha de consulta:</strong> ${fecha}</p>
@@ -99,6 +104,7 @@ const ProductScreen = () => {
           </body>
         </html>
       `;
+      
 
       const { uri } = await Print.printToFileAsync({ html });
 
