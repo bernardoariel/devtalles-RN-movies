@@ -46,8 +46,9 @@ const ProductScreen = () => {
     const fecha = new Date().toLocaleDateString();
   
     const cuotasText = selectedCuotas.length
-  ? `- * - * - *\n💳 Formas de pago:\n${selectedCuotas.map(c => {
-      return `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`;
+  ? `- * - * - *\n💳 Formas de pago:\n${selectedCuotas.map((c, i) => {
+      const formaPago = c.formaPago.replace(/\./g, ' ');
+      return `**Opción ${i + 1}:** ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.total} con ${formaPago}`;
     }).join("\n")}\n`
   : "";
 
@@ -82,12 +83,15 @@ const ProductScreen = () => {
       }
 
       const cuotasHTML = selectedCuotas.length
-      ? `
-        <hr/>
-        <p><strong>💳 Formas de pago:</strong></p>
-        <p>${selectedCuotas.map(c => `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`).join("<br/>")}</p>
-      `
-      : "";
+  ? `
+    <hr/>
+    <p><strong>💳 Formas de pago:</strong></p>
+    <p>${selectedCuotas.map((c, i) => {
+      const formaPago = c.formaPago.replace(/\./g, ' ');
+      return `<strong>Opción ${i + 1}:</strong> ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.total} con ${formaPago}`;
+    }).join("<br/>")}</p>
+  `
+  : "";
 
 
         const html = `
