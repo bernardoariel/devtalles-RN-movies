@@ -46,12 +46,11 @@ const ProductScreen = () => {
     const fecha = new Date().toLocaleDateString();
   
     const cuotasText = selectedCuotas.length
-      ? `- * - * - *\n${selectedCuotas.map(c => {
-          const formaPagoNombre = findFormaPagoById(c.formaPago)?.FormaPago || "Forma de pago desconocida";
-          return `${c.NCuota} cuotas de ${c.total} - ${formaPagoNombre}`;
-        }).join("\n")}\n`
-      : "";
-  
+  ? `- * - * - *\n💳 Formas de pago:\n${selectedCuotas.map(c => {
+      return `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`;
+    }).join("\n")}\n`
+  : "";
+
     const message = `
       *${producto!.Producto}*
       ${producto!.Descripcion}
@@ -83,8 +82,13 @@ const ProductScreen = () => {
       }
 
       const cuotasHTML = selectedCuotas.length
-        ? `<hr/><p>${selectedCuotas.map(c => `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`).join("<br/>")}</p>`
-        : "";
+      ? `
+        <hr/>
+        <p><strong>💳 Formas de pago:</strong></p>
+        <p>${selectedCuotas.map(c => `${c.NCuota} cuotas de ${c.total} - ${c.formaPago}`).join("<br/>")}</p>
+      `
+      : "";
+
 
         const html = `
         <html>
