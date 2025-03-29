@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Abril App",
-    "slug": "movies-app",
-    "version": "1.1.0",
+    "slug": "abril-app",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -10,14 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bernardock.abrilapp"
+      "bundleIdentifier": "com.bernardockdev.abrilapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.bernardock.abrilapp",
+      "package": "com.bernardockdev.abrilapp",
       "permissions": [
         "INTERNET"
       ]
@@ -47,9 +47,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "4ddd45e4-2097-4e79-abe6-1a913dfd2379"
+        "projectId": "7fa5c9ef-6729-4481-acff-6b95d1526515"
       }
     },
-    "owner": "bernardock"
+    "owner": "bernardockdev"
   }
 }
