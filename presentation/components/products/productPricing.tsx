@@ -96,13 +96,33 @@ const ProductPricing = ({ Producto, Precio, formaPagoPlanes, findFormaPagoById, 
 
             {expandedGroups[codTarjeta] && (
               <View style={styles.table}>
-                {group.map((tarjeta) => (
-                  <TouchableOpacity key={tarjeta.NCuota} onPress={() => toggleCuotaSelection(tarjeta, formaPago)} style={styles.row}>
-                    <Ionicons name={selectedCuotas.some((c) => c.NCuota === tarjeta.NCuota && c.formaPago === formaPago) ? 'checkbox' : 'square-outline'} size={20} color="white" />
-                    <Text style={styles.tableCell}>{tarjeta.NCuota} cuotas</Text>
-                    <Text style={styles.tableCell}>{formatPrice(calculateTotal(tarjeta))}</Text>
-                  </TouchableOpacity>
-                ))}
+                <View style={[styles.row, { marginTop: 10 }]}>
+                  <Text style={[styles.tableHeader, { color: '#FFF', flex: 0.3 }]}>#</Text>
+                  <Text style={[styles.tableHeader, { flex: 0.7 }]}>Cuotas</Text>
+                  <Text style={[styles.tableHeader, { flex: 1 }]}>Importe</Text>
+                  <Text style={[styles.tableHeader, { flex: 1.2 }]}>Total</Text>
+                </View>
+
+            
+            
+            {group.map((tarjeta) => (
+              <TouchableOpacity key={tarjeta.NCuota} onPress={() => toggleCuotaSelection(tarjeta, formaPago)} style={styles.row}>
+                <View style={{ flex: 0.3, alignItems: 'center' }}>
+                  <Ionicons
+                    name={selectedCuotas.some((c) => c.NCuota === tarjeta.NCuota && c.formaPago === formaPago) ? 'checkbox' : 'square-outline'}
+                    size={18}
+                    color="white"
+                  />
+                </View>
+                <Text style={[styles.tableCell, { flex: 0.7 }]}>{tarjeta.NCuota}</Text>
+                <Text style={[styles.tableCell, { flex: 1 }]}>{formatPrice(calculateTotal(tarjeta) / tarjeta.NCuota)}</Text>
+                <Text style={[styles.tableCell, { flex: 1.2, color: '#FFA500', fontWeight: 'bold' }]}>
+                  {formatPrice(calculateTotal(tarjeta))}
+                </Text>
+              </TouchableOpacity>
+
+            ))}
+            
               </View>
             )}
           </View>
@@ -122,7 +142,24 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 18, fontWeight: 'bold', color: colors.primary.dark },
   table: { marginTop: 8 },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 5 },
-  tableCell: { flex: 1, textAlign: 'center', fontSize: 10, color: '#FFF' },
+  tableHeader: {
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#FFF'
+  },
+  
+  tableCell: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: '#FFF',
+  },
+  
+  checkboxSpace: {
+    width: 30, // mismo ancho que Ionicons ocupa visualmente
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default ProductPricing;
