@@ -26,6 +26,7 @@ import useProductPricing from '@/presentation/hooks/useProductPrecing';
 interface SelectedCuota {
   NCuota: number;
   total: string;
+  importeCuota: string;
   formaPago: string;
 }
 
@@ -48,7 +49,7 @@ const ProductScreen = () => {
     const cuotasText = selectedCuotas.length
   ? `- * - * - *\n💳 Formas de pago:\n${selectedCuotas.map((c, i) => {
       const formaPago = c.formaPago.replace(/\./g, ' ');
-      return `**Opción ${i + 1}:** ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.total} con ${formaPago}`;
+      return `**Opción ${i + 1}:** ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.importeCuota} con ${formaPago}`;
     }).join("\n")}\n`
   : "";
 
@@ -88,7 +89,7 @@ const ProductScreen = () => {
     <p><strong>💳 Formas de pago:</strong></p>
     <p>${selectedCuotas.map((c, i) => {
       const formaPago = c.formaPago.replace(/\./g, ' ');
-      return `<strong>Opción ${i + 1}:</strong> ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.total} con ${formaPago}`;
+      return `<strong>Opción ${i + 1}:</strong> ${c.NCuota} ${c.NCuota === 1 ? "cuota" : "cuotas"} de ${c.importeCuota} con ${formaPago}`;
     }).join("<br/>")}</p>
   `
   : "";

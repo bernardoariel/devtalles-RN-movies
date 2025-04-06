@@ -57,7 +57,12 @@ const ProductPricing = ({ Producto, Precio, formaPagoPlanes, findFormaPagoById, 
       if (exists) {
         return prev.filter((item) => item.NCuota !== tarjeta.NCuota || item.formaPago !== formaPago);
       }
-      return [...prev, { NCuota: tarjeta.NCuota, total: formatPrice(calculateTotal(tarjeta)), formaPago }];
+      return [...prev, {
+        NCuota: tarjeta.NCuota,
+        total: formatPrice(calculateTotal(tarjeta)),
+        importeCuota: formatPrice(calculateTotal(tarjeta) / tarjeta.NCuota),
+        formaPago
+      }];
     });
   };
 
